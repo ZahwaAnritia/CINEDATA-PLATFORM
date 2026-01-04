@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation | CineData API</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
+        pre { background: #161B22; padding: 1rem; border-radius: 0.75rem; overflow-x: auto; border: 1px solid #30363d; }
+        code { font-family: 'Fira Code', monospace; font-size: 0.9em; }
+    </style>
+</head>
+<body class="bg-[#050810] text-slate-300">
+
+    <div class="flex">
+        <!-- Sidebar Navigation -->
+        <aside class="w-64 h-screen sticky top-0 bg-[#0D1117] border-r border-slate-800 p-8 hidden md:block">
+            <div class="text-xl font-black text-white mb-10">CINE<span class="text-red-500">DATA</span></div>
+            <nav class="space-y-6 text-sm font-semibold uppercase tracking-wider">
+                <div class="text-slate-500 text-xs">Introduction</div>
+                <a href="#getting-started" class="block hover:text-white transition">Getting Started</a>
+                <a href="#authentication" class="block hover:text-white transition">Authentication</a>
+                <div class="text-slate-500 text-xs pt-4">Endpoints</div>
+                <a href="#get-movies" class="block hover:text-white transition text-red-500">GET Movies</a>
+                <div class="text-slate-500 text-xs pt-4">Support</div>
+                <a href="#errors" class="block hover:text-white transition">Error Codes</a>
+                <a href="/" class="block text-slate-500 hover:text-white pt-10">← Back to Home</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 max-w-4xl px-8 md:px-16 py-12">
+            
+            <!-- Getting Started -->
+            <section id="getting-started" class="mb-20">
+                <h1 class="text-4xl font-extrabold text-white mb-6">Documentation</h1>
+                <p class="text-lg leading-relaxed mb-6">Selamat datang di CineData API. Platform ini menyediakan akses data film publik melalui REST API. Dokumentasi ini membantu kamu untuk mengintegrasikan data film ke dalam aplikasi kamu dengan cepat.</p>
+                <div class="bg-red-500/10 border border-red-500/20 p-4 rounded-xl text-red-400 text-sm">
+                    <strong>Base URL:</strong> <code>http://localhost:3000/api/v1</code>
+                </div>
+            </section>
+
+            <!-- Authentication -->
+            <section id="authentication" class="mb-20 border-t border-slate-800 pt-12">
+                <h2 class="text-2xl font-bold text-white mb-4">Authentication</h2>
+                <p class="mb-6">API ini menggunakan <strong>API Key</strong> untuk mengautentikasi setiap request. Kamu bisa mendapatkan key kamu di <a href="/dashboard" class="text-red-500 hover:underline">Dashboard Developer</a>.</p>
+                <p class="mb-4">Kirimkan key kamu melalui header <code>x-api-key</code>:</p>
+                <pre><code class="text-blue-300">x-api-key: YOUR_API_KEY_HERE</code></pre>
+            </section>
+
+            <!-- GET Movies -->
+            <section id="get-movies" class="mb-20 border-t border-slate-800 pt-12">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="bg-green-500/20 text-green-500 px-3 py-1 rounded-md text-sm font-bold">GET</span>
+                    <h2 class="text-2xl font-bold text-white">/movies</h2>
+                </div>
+                <p class="mb-6">Mengambil daftar semua film yang tersedia di database CineData.</p>
+                
+                <h4 class="font-bold text-white mb-2">Example Request (JavaScript)</h4>
+                <pre><code class="text-slate-300">
+fetch('http://localhost:3000/api/v1/movies', {
+  headers: {
+    'x-api-key': 'wf_da8e16...'
+  }
+})
+.then(res => res.json())
+.then(data => console.log(data));
+                </code></pre>
+
+                <h4 class="font-bold text-white mt-8 mb-2">Example Success Response</h4>
+                <pre><code class="text-green-400">
+{
+  "status": "success",
+  "results": 1,
+  "data": [
+    {
+      "id": 1,
+      "title": "Inception",
+      "release_year": 2010,
+      "genres": "Action,Sci-Fi",
+      "rating": "8.8",
+      "director": "Christopher Nolan"
+    }
+  ]
+}
+                </code></pre>
+            </section>
+
+            <!-- Error Codes -->
+            <section id="errors" class="mb-20 border-t border-slate-800 pt-12">
+                <h2 class="text-2xl font-bold text-white mb-6">Error Codes</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="border-b border-slate-800 text-slate-500">
+                            <tr>
+                                <th class="py-3 px-2 font-bold">Code</th>
+                                <th class="py-3 px-2 font-bold">Description</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800">
+                            <tr>
+                                <td class="py-4 px-2 text-white font-mono">401</td>
+                                <td class="py-4 px-2">API Key missing (Header x-api-key tidak ditemukan).</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 px-2 text-white font-mono">403</td>
+                                <td class="py-4 px-2">Invalid API Key (Key salah atau tidak aktif).</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 px-2 text-white font-mono">429</td>
+                                <td class="py-4 px-2">Too Many Requests (Kamu melewati batas rate limit).</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 px-2 text-white font-mono">404</td>
+                                <td class="py-4 px-2">Endpoint not found.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <footer class="text-slate-600 text-sm mt-20">
+                &copy; 2026 CineData API Docs.
+            </footer>
+        </main>
+    </div>
+
+</body>
+</html>

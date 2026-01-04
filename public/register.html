@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join CineData | Developer Registration</title>
+    <!-- Frameworks -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome untuk Icon Mata -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: #050810;
+        }
+        .glass-card {
+            background: #0D1117;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 50px rgba(239, 68, 68, 0.1);
+        }
+        input:focus {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 1px #ef4444;
+        }
+    </style>
+</head>
+<body class="text-slate-200 min-h-screen flex items-center justify-center p-6">
+
+    <div class="w-full max-w-lg p-10 glass-card rounded-[3rem] relative overflow-hidden">
+        <div class="text-center mb-10">
+            <div class="text-2xl font-black tracking-tighter uppercase italic text-white mb-2">CINE<span class="text-red-500">DATA</span></div>
+            <p class="text-slate-500 text-xs font-bold uppercase tracking-[0.2em]">Create Developer Account</p>
+        </div>
+
+        <form id="registerForm" class="space-y-5">
+            <!-- Username -->
+            <div>
+                <label class="block text-[10px] font-black uppercase tracking-widest mb-2 text-slate-500 ml-2">Full Username</label>
+                <input type="text" id="username" required placeholder="example_dev" 
+                    class="w-full bg-[#161B22] border border-white/5 rounded-2xl px-6 py-4 outline-none text-sm transition-all">
+            </div>
+
+            <!-- Email -->
+            <div>
+                <label class="block text-[10px] font-black uppercase tracking-widest mb-2 text-slate-500 ml-2">Email Address</label>
+                <input type="email" id="email" required placeholder="dev@cinedata.com" 
+                    class="w-full bg-[#161B22] border border-white/5 rounded-2xl px-6 py-4 outline-none text-sm transition-all">
+            </div>
+
+            <!-- Password -->
+            <div class="relative">
+                <label class="block text-[10px] font-black uppercase tracking-widest mb-2 text-slate-500 ml-2">Password (Min 8 characters)</label>
+                <input type="password" id="password" required placeholder="••••••••" 
+                    class="w-full bg-[#161B22] border border-white/5 rounded-2xl px-6 py-4 outline-none text-sm transition-all pr-14">
+                <!-- Icon Mata -->
+                <button type="button" onclick="togglePassword('password', 'eye-icon-1')" class="absolute right-6 top-[42px] text-slate-500 hover:text-red-500 transition">
+                    <i id="eye-icon-1" class="fas fa-eye"></i>
+                </button>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="relative">
+                <label class="block text-[10px] font-black uppercase tracking-widest mb-2 text-slate-500 ml-2">Confirm Password</label>
+                <input type="password" id="confirmPassword" required placeholder="••••••••" 
+                    class="w-full bg-[#161B22] border border-white/5 rounded-2xl px-6 py-4 outline-none text-sm transition-all pr-14">
+                <!-- Icon Mata -->
+                <button type="button" onclick="togglePassword('confirmPassword', 'eye-icon-2')" class="absolute right-6 top-[42px] text-slate-500 hover:text-red-500 transition">
+                    <i id="eye-icon-2" class="fas fa-eye"></i>
+                </button>
+            </div>
+
+            <button type="submit" class="w-full bg-white text-black py-5 rounded-2xl font-black hover:bg-slate-200 transition shadow-xl uppercase tracking-widest text-[10px] mt-4">
+                Create Free Account
+            </button>
+        </form>
+
+        <p class="text-center mt-10 text-slate-500 text-xs font-bold uppercase tracking-widest">
+            Already have an account? <a href="/login" class="text-red-500 hover:underline">Sign In</a>
+        </p>
+    </div>
+
+    <script>
+        // 1. Fungsi Toggle Lihat Password
+        function togglePassword(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+
+        // 2. Logika Submit & Validasi
+        document.getElementById('registerForm').onsubmit = async (e) => {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Validasi di sisi Client
+            if (password.length < 8) {
+                return Swal.fire({ icon: 'warning', title: 'Password Terlalu Pendek', text: 'Minimal password adalah 8 karakter.', background: '#0D1117', color: '#fff' });
+            }
+
+            if (password !== confirmPassword) {
+                return Swal.fire({ icon: 'error', title: 'Password Tidak Cocok', text: 'Pastikan konfirmasi password sama dengan password utama.', background: '#0D1117', color: '#fff' });
+            }
+
+            try {
+                // Tampilkan Loading
+                Swal.fire({ title: 'Mendaftarkan Akun...', allowOutsideClick: false, didOpen: () => { Swal.showLoading() }, background: '#0D1117', color: '#fff' });
+
+                const res = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password })
+                });
+                
+                const data = await res.json();
+
+                if (res.ok) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil Terdaftar!',
+                        text: 'Silakan login menggunakan akun baru anda.',
+                        background: '#0D1117',
+                        color: '#fff',
+                        confirmButtonColor: '#ef4444'
+                    }).then(() => {
+                        window.location.href = '/login';
+                    });
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Pendaftaran Gagal', text: data.error, background: '#0D1117', color: '#fff' });
+                }
+            } catch (err) {
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Terjadi masalah pada koneksi server.', background: '#0D1117', color: '#fff' });
+            }
+        };
+    </script>
+</body>
+</html>

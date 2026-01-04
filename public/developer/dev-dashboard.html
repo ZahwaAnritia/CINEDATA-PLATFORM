@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>Dev Console | CineData API</title>
+    
+    <!-- Scripts & Frameworks -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-red: #ef4444;
+            --dark-bg: #050810;
+            --glass-card: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+        
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--dark-bg); color: #e2e8f0; }
+        .font-mono { font-family: 'Fira Code', monospace; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--primary-red); border-radius: 10px; }
+        
+        .sidebar-item { transition: all 0.2s ease; border-left: 3px solid transparent; }
+        .sidebar-item:hover { background: rgba(239, 68, 68, 0.05); color: white; border-left: 3px solid var(--primary-red); }
+        .sidebar-item.active { background: rgba(239, 68, 68, 0.1); color: var(--primary-red); border-left: 3px solid var(--primary-red); }
+
+        .glass-card { background: var(--glass-card); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); }
+        .active-tab { background: rgba(239, 68, 68, 0.1) !important; border: 1px solid rgba(239, 68, 68, 0.5) !important; color: #ef4444 !important; }
+    </style>
+</head>
+<body class="min-h-screen selection:bg-red-500/30">
+
+    <div class="flex">
+        <!-- SIDEBAR -->
+        <aside class="w-64 h-screen glass-card sticky top-0 flex flex-col z-20 overflow-hidden shadow-2xl">
+            <div class="p-8 pb-12">
+                <div class="text-2xl font-black italic tracking-tighter text-white">CINE<span class="text-red-500">DATA</span></div>
+                <div class="text-[9px] text-slate-500 font-bold tracking-[0.3em] uppercase mt-1">Dev Console</div>
+            </div>
+            
+            <nav class="flex-1 px-4 space-y-2">
+                <a href="#" class="sidebar-item active flex items-center space-x-4 p-3 rounded-xl text-xs font-bold uppercase tracking-widest">
+                    <i class="fas fa-terminal w-5"></i>
+                    <span>Console</span>
+                </a>
+                <a href="/docs" class="sidebar-item flex items-center space-x-4 p-3 rounded-xl text-xs font-bold uppercase tracking-widest text-slate-400">
+                    <i class="fas fa-book w-5"></i>
+                    <span>Docs API</span>
+                </a>
+                <a href="/" target="_blank" class="sidebar-item flex items-center space-x-4 p-3 rounded-xl text-xs font-bold uppercase tracking-widest text-slate-400 group">
+                    <i class="fas fa-globe w-5 transition group-hover:text-red-500"></i>
+                    <span>View Site</span>
+                </a>
+            </nav>
+
+            <div class="p-6 border-t border-white/5">
+                <div class="bg-white/[0.02] border border-white/5 p-4 rounded-2xl flex items-center justify-between">
+                    <div class="flex flex-col min-w-0">
+                        <span class="text-[9px] text-slate-500 font-black uppercase tracking-widest">Signed in as</span>
+                        <span id="userDisplayName" class="text-white text-xs font-bold truncate pr-2">Developer</span>
+                    </div>
+                    <button onclick="logout()" class="p-2.5 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all">
+                        <i class="fas fa-power-off text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="flex-1 p-10 max-w-7xl mx-auto overflow-y-auto h-screen custom-scrollbar">
+            
+            <!-- Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div class="glass-card p-8 rounded-[2rem] border-t-4 border-t-red-500 shadow-xl text-center">
+                    <p class="text-slate-500 text-[10px] font-black uppercase mb-2">Requests</p>
+                    <h2 id="totalCalls" class="text-6xl font-black text-white leading-none">0</h2>
+                </div>
+                <div class="glass-card p-8 rounded-[2rem] border-t-4 border-t-green-500 shadow-xl text-center">
+                    <p class="text-slate-500 text-[10px] font-black uppercase mb-2">Avg Latency</p>
+                    <h2 id="avgLatency" class="text-6xl font-black text-green-500 leading-none">0<span class="text-xs font-normal opacity-50 ml-1">MS</span></h2>
+                </div>
+                <div class="glass-card p-8 rounded-[2.5rem] border-t-4 border-t-blue-500 shadow-xl flex flex-col justify-center items-center">
+                    <p class="text-slate-500 text-[10px] font-black uppercase mb-2 tracking-widest text-center">Status</p>
+                    <h2 class="text-3xl font-black text-blue-400 italic tracking-tighter uppercase">Healthy</h2>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8 mb-12">
+                <!-- Credentials -->
+                <div class="lg:col-span-1 glass-card p-8 rounded-[3rem] shadow-xl flex flex-col">
+                    <h3 class="text-xs font-black text-white uppercase tracking-widest mb-8 flex items-center">
+                        <i class="fas fa-fingerprint mr-3 text-red-500"></i> API Credentials
+                    </h3>
+                    <div id="keysContainer" class="space-y-4 flex-1"></div>
+                    <button onclick="generateNewKey()" class="mt-8 py-4 bg-white text-black font-black rounded-2xl hover:bg-red-600 hover:text-white transition shadow-xl uppercase text-[10px] tracking-widest italic">+ Create Key</button>
+                </div>
+
+                <!-- Logs -->
+                <div class="lg:col-span-2 glass-card rounded-[3rem] overflow-hidden shadow-xl flex flex-col h-full">
+                    <div class="p-6 border-b border-white/5 bg-white/[0.01]">
+                        <h3 class="text-xs font-black text-white uppercase tracking-widest">Live Activity Logs</h3>
+                    </div>
+                    <div class="overflow-x-auto flex-1 h-[250px] custom-scrollbar">
+                        <table class="w-full text-left">
+                            <thead class="bg-black/40 text-slate-600 text-[9px] font-black uppercase tracking-widest">
+                                <tr><th class="p-5">Path</th><th class="p-5 text-center">Status</th><th class="p-5 text-right">Timestamp</th></tr>
+                            </thead>
+                            <tbody id="usageBody" class="divide-y divide-white/5 text-[12px]"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Playground -->
+            <div class="glass-card rounded-[3.5rem] overflow-hidden shadow-2xl mb-12">
+                <div class="p-10 border-b border-white/5 bg-white/[0.02]">
+                    <h3 class="text-2xl font-black text-white uppercase italic tracking-tighter">Interactive Sandbox</h3>
+                </div>
+                <div class="grid lg:grid-cols-5 divide-x divide-white/5">
+                    <div class="lg:col-span-2 p-10 space-y-8 bg-black/10">
+                        <div>
+                            <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-4 italic text-left">1. Target Resource</label>
+                            <div class="flex flex-col space-y-3">
+                                <div class="flex">
+                                    <span class="bg-red-500/10 text-red-500 border border-red-500/20 border-r-0 px-5 py-4 rounded-l-2xl font-black text-xs">GET</span>
+                                    <input type="text" id="playgroundEndpoint" value="/api/v1/movies" class="w-full bg-[#161B22] border border-white/10 rounded-r-2xl px-5 py-4 focus:border-red-500 outline-none text-xs font-mono text-slate-300">
+                                </div>
+                                <div class="flex gap-2">
+                                    <button onclick="setEndpoint('/api/v1/movies')" class="text-[8px] bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg hover:bg-white/10 transition font-black uppercase">All Movies</button>
+                                    <button onclick="setEndpoint('/api/v1/movies/1')" class="text-[8px] bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg hover:bg-white/10 transition font-black uppercase">Detail ID: 1</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-4 italic text-left">2. x-api-key Authentication</label>
+                            <input type="text" id="playgroundKey" placeholder="Paste your key here" class="w-full bg-[#161B22] border border-white/10 rounded-2xl px-5 py-4 focus:border-red-500 outline-none text-red-500 font-mono text-xs shadow-inner">
+                        </div>
+                        <button onclick="testRequest()" id="btnTest" class="w-full py-5 bg-red-600 text-white font-black rounded-2xl shadow-xl uppercase tracking-widest text-xs transition-all hover:bg-red-700">Execute Call 🚀</button>
+                    </div>
+                    
+                    <div class="lg:col-span-3 p-10 bg-black/40 flex flex-col min-h-[550px]">
+                        <div class="flex justify-between items-center mb-6">
+                            <span class="text-[10px] font-black text-slate-700 uppercase tracking-[0.25em]">Response JSON</span>
+                            <div id="responseStatus" class="hidden px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest"></div>
+                        </div>
+                        <div class="h-[250px] bg-[#050810] rounded-[2.5rem] p-8 border border-white/5 font-mono text-[11px] overflow-auto custom-scrollbar shadow-inner mb-8">
+                            <pre id="jsonResult" class="text-blue-400 italic opacity-40 leading-relaxed">// Initialize call to fetch data...</pre>
+                        </div>
+                        <!-- Visual Preview -->
+                        <div id="visualPreview" class="hidden">
+                            <div class="bg-white/5 border border-white/10 p-5 rounded-[2rem] flex items-center space-x-6 border-l-4 border-l-red-500 shadow-2xl animate-fade-in">
+                                <img id="prevImg" src="" class="w-20 h-28 object-cover rounded-xl shadow-lg border border-white/10" onerror="this.src='https://dummyimage.com/100x150/1e293b/ffffff&text=Poster'">
+                                <div class="flex-1 text-left">
+                                    <h4 id="prevTitle" class="text-lg font-bold text-white leading-tight uppercase italic tracking-tighter"></h4>
+                                    <p id="prevMeta" class="text-[10px] text-slate-500 mt-1 uppercase tracking-widest font-black"></p>
+                                    <div id="prevRating" class="mt-2 text-yellow-500 text-sm font-black italic"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API REFERENCE / SCHEMA REFERENCE (Dikembalikan) -->
+            <div class="glass-card rounded-[3.5rem] overflow-hidden shadow-2xl mb-20">
+                <div class="p-10 border-b border-white/5 bg-white/[0.02]">
+                    <h3 class="text-2xl font-black text-white uppercase italic tracking-tighter">Response Reference</h3>
+                    <p class="text-sm text-slate-500 mt-1 text-left">Standard schema for CineData API responses.</p>
+                </div>
+                <div class="p-10 grid lg:grid-cols-5 gap-10">
+                    <div class="lg:col-span-1 space-y-2 flex flex-col">
+                        <button onclick="showExample(200)" id="tab-200" class="status-tab text-left px-5 py-4 rounded-xl border border-white/5 text-[10px] font-black text-slate-500 transition-all uppercase tracking-widest active-tab">200 Success</button>
+                        <button onclick="showExample(401)" id="tab-401" class="status-tab text-left px-5 py-4 rounded-xl border border-white/5 text-[10px] font-black text-slate-500 transition-all uppercase tracking-widest">401 Unauth</button>
+                        <button onclick="showExample(404)" id="tab-404" class="status-tab text-left px-5 py-4 rounded-xl border border-white/5 text-[10px] font-black text-slate-500 transition-all uppercase tracking-widest">404 Not Found</button>
+                        <button onclick="showExample(500)" id="tab-500" class="status-tab text-left px-5 py-4 rounded-xl border border-white/5 text-[10px] font-black text-slate-500 transition-all uppercase tracking-widest">500 Server Error</button>
+                    </div>
+                    <div class="lg:col-span-4 bg-black/50 rounded-[2.5rem] p-10 border border-white/5 font-mono text-[13px] shadow-inner">
+                        <pre id="exampleCode" class="text-blue-300 leading-relaxed"></pre>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+        if (!token || user.role !== 'developer') {
+            localStorage.clear(); window.location.href = '/login'; 
+        }
+        document.getElementById('userDisplayName').innerText = user.username;
+
+        const examples = {
+            200: { status: "success", count: 2, data: [{ id: 1, title: "The Batman", rating: 7.8 }, { id: 2, title: "Joker", rating: 8.4 }] },
+            401: { status: "error", code: 401, message: "API Key missing in headers." },
+            404: { status: "error", code: 404, message: "Resource not found." },
+            500: { status: "error", code: 500, message: "Internal server error." }
+        };
+
+        async function loadDashboard() {
+            try {
+                const headers = { 'Authorization': `Bearer ${token}` };
+                const [resKeys, resStats] = await Promise.all([
+                    fetch('/api/keys', { headers }),
+                    fetch('/api/keys/my-stats', { headers })
+                ]);
+                renderKeys(await resKeys.json());
+                renderStats(await resStats.json());
+            } catch (err) { console.error(err); }
+        }
+
+        function renderKeys(keys) {
+            const container = document.getElementById('keysContainer');
+            if (!Array.isArray(keys) || keys.length === 0) { container.innerHTML = '<p class="text-slate-700 italic text-xs text-center py-4">No credentials active.</p>'; return; }
+            container.innerHTML = keys.map(k => `
+                <div class="bg-black/30 border border-white/5 p-5 rounded-2xl relative group hover:border-red-500/30 transition-all">
+                    <p class="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1 italic">${k.key_name}</p>
+                    <code class="text-xs text-red-500 font-mono break-all block pr-12">${k.api_key}</code>
+                    <button onclick="copyToClipboard('${k.api_key}')" class="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/5 rounded-xl hover:bg-red-600 transition-all text-xs shadow-xl"><i class="fa-regular fa-copy"></i></button>
+                </div>
+            `).join('');
+        }
+
+        function renderStats(stats) {
+            document.getElementById('totalCalls').innerText = stats.total_calls || 0;
+            const usage = stats.recent_usage || [];
+            const avg = usage.length > 0 ? Math.round(usage.reduce((a, b) => a + (b.response_time_ms || 0), 0) / usage.length) : 0;
+            document.getElementById('avgLatency').innerText = avg;
+
+            document.getElementById('usageBody').innerHTML = usage.length === 0 
+                ? '<tr><td colspan="3" class="p-12 text-center text-slate-700 italic text-[10px] font-bold tracking-[0.3em] uppercase">Awaiting Traffic</td></tr>'
+                : usage.map(u => `
+                    <tr class="hover:bg-white/[0.02] transition-colors">
+                        <td class="p-6 font-mono text-[10px] text-blue-400 italic">${u.endpoint}</td>
+                        <td class="p-6 text-center"><span class="text-[10px] font-black px-3 py-1 rounded-full ${u.status_code === 200 ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}">${u.status_code}</span></td>
+                        <td class="p-6 text-slate-500 text-right text-[10px] font-bold uppercase tracking-tighter opacity-60">${new Date(u.created_at).toLocaleTimeString()}</td>
+                    </tr>
+                `).join('');
+        }
+
+        async function testRequest() {
+            const btn = document.getElementById('btnTest');
+            const endpoint = document.getElementById('playgroundEndpoint').value;
+            const key = document.getElementById('playgroundKey').value;
+            const resBox = document.getElementById('jsonResult');
+            const statusBadge = document.getElementById('responseStatus');
+            const previewDiv = document.getElementById('visualPreview');
+
+            if(!key) return Swal.fire({ icon: 'warning', title: 'Unauthorized', text: 'Paste your API Key first!', background: '#0D1117', color: '#fff', confirmButtonColor: '#ef4444' });
+
+            btn.disabled = true; btn.innerText = "FETCHING...";
+            resBox.classList.remove('opacity-40');
+            resBox.innerText = "// Querying CineData Cloud...";
+            previewDiv.classList.add('hidden');
+
+            try {
+                const response = await fetch(endpoint, { headers: { 'x-api-key': key }});
+                const data = await response.json();
+                statusBadge.classList.remove('hidden', 'bg-green-500/10', 'text-green-500', 'bg-red-500/10', 'text-red-500');
+                statusBadge.classList.add('block', response.ok ? 'bg-green-500/10' : 'bg-red-500/10', response.ok ? 'text-green-500' : 'text-red-500');
+                statusBadge.innerText = `STATUS: ${response.status}`;
+                resBox.innerText = JSON.stringify(data, null, 4);
+
+                if (response.ok && data.data) {
+                    const m = Array.isArray(data.data) ? data.data[0] : data.data;
+                    if (m && m.title) {
+                        document.getElementById('prevImg').src = m.cover_url;
+                        document.getElementById('prevTitle').innerText = m.title;
+                        document.getElementById('prevMeta').innerText = `${m.release_year} • ${m.genres}`;
+                        document.getElementById('prevRating').innerText = `⭐ ${m.rating}`;
+                        previewDiv.classList.remove('hidden');
+                    }
+                }
+                loadDashboard();
+            } catch (err) { resBox.innerText = `// Connection Error: ${err.message}`; }
+            finally { btn.disabled = false; btn.innerText = "Execute Call 🚀"; }
+        }
+
+        function setEndpoint(path) { document.getElementById('playgroundEndpoint').value = path; }
+        function showExample(code) {
+            document.querySelectorAll('.status-tab').forEach(t => t.classList.remove('active-tab'));
+            document.getElementById(`tab-${code}`).classList.add('active-tab');
+            document.getElementById('exampleCode').innerText = JSON.stringify(examples[code], null, 4);
+        }
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
+            document.getElementById('playgroundKey').value = text;
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Key Ready!', showConfirmButton: false, timer: 1500, background: '#161B22', color: '#fff' });
+        }
+        async function generateNewKey() {
+            const { value: name } = await Swal.fire({ title: 'Assign Project Name', input: 'text', background: '#0D1117', color: '#fff', confirmButtonColor: '#ef4444' });
+            if (name) { await fetch('/api/keys/generate', { method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ name })}); loadDashboard(); }
+        }
+        function logout() {
+            Swal.fire({ title: 'Logout?', background: '#0D1117', color: '#fff', showCancelButton: true, confirmButtonColor: '#ef4444' }).then(res => {
+                if(res.isConfirmed) { localStorage.clear(); window.location.href = '/login'; }
+            });
+        }
+        window.onload = () => { loadDashboard(); showExample(200); };
+    </script>
+</body>
+</html>

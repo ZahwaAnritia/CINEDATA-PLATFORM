@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>Admin Hub | CineData Management</title>
+    
+    <!-- Scripts & Frameworks -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            --dark-gradient: linear-gradient(135deg, #0D1117 0%, #050810 100%);
+        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--dark-gradient); }
+        
+        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .gradient-text {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    -webkit-background-clip: text;
+    background-clip: text; /* Tambahkan baris ini di bawah -webkit */
+    -webkit-text-fill-color: transparent;
+}
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #ef4444; border-radius: 10px; }
+        
+        input[type='number']::-webkit-inner-spin-button { opacity: 1; filter: invert(1); }
+        .hover-lift { transition: all 0.3s ease; }
+        .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+    </style>
+</head>
+<body class="text-slate-200 min-h-screen selection:bg-red-500/30">
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="w-72 h-screen glass-card p-8 sticky top-0 flex flex-col shadow-2xl z-20">
+            <div class="mb-12">
+                <div class="text-3xl font-black gradient-text tracking-tighter uppercase italic">CINE<span class="text-white">DATA</span></div>
+                <div class="text-[10px] text-slate-500 font-bold tracking-[0.3em] uppercase mt-1">Admin Console</div>
+            </div>
+            
+            <nav class="space-y-3 flex-1">
+                <a href="#" class="flex items-center space-x-4 p-4 bg-red-600/10 text-red-500 rounded-2xl font-bold border border-red-500/20">
+                    <i class="fas fa-film text-xl"></i>
+                    <span>Catalog Hub</span>
+                </a>
+                <a href="/" target="_blank" class="flex items-center space-x-4 p-4 hover:bg-white/5 rounded-2xl transition text-slate-400 group">
+                    <i class="fas fa-external-link-alt text-lg group-hover:text-white"></i>
+                    <span>View Public Site</span>
+                </a>
+            </nav>
+
+            <div class="mt-auto pt-8 border-t border-white/5">
+                <button onclick="logout()" class="flex items-center justify-center space-x-3 p-4 text-red-400 hover:bg-red-500/10 w-full rounded-2xl transition font-black uppercase text-xs tracking-widest border border-red-500/20">
+                    <i class="fas fa-door-open"></i>
+                    <span>Sign Out</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-10 max-w-7xl mx-auto">
+            <header class="flex justify-between items-center mb-10">
+                <div>
+                    <h1 class="text-4xl font-extrabold text-white tracking-tight">System Management</h1>
+                    <p class="text-slate-500 mt-2 flex items-center">
+                        <span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
+                        Operational • Last update: <span id="lastUpdated" class="ml-1 font-bold text-slate-400">Just now</span>
+                    </p>
+                </div>
+                <button onclick="openModal()" class="bg-red-600 px-8 py-4 rounded-2xl font-black uppercase text-xs tracking-[0.2em] hover:bg-red-700 transition shadow-xl shadow-red-600/20 hover-lift">
+                    + Add New Movie
+                </button>
+            </header>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div class="glass-card p-8 rounded-[2.5rem] hover-lift">
+                    <p class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2">Total Catalog</p>
+                    <h2 id="totalMovies" class="text-5xl font-black text-white">0</h2>
+                </div>
+                <div class="glass-card p-8 rounded-[2.5rem] hover-lift">
+                    <p class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2">System Traffic</p>
+                    <h2 id="totalHits" class="text-5xl font-black text-blue-500">0</h2>
+                </div>
+                <div class="glass-card p-8 rounded-[2.5rem] hover-lift">
+                    <p class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2">Avg Rating</p>
+                    <h2 id="avgRating" class="text-5xl font-black text-yellow-500">0.0</h2>
+                </div>
+            </div>
+
+            <!-- Table Section -->
+            <div class="glass-card rounded-[3rem] overflow-hidden shadow-2xl">
+                <div class="p-8 border-b border-white/5 flex justify-between items-center bg-white/[0.01]">
+                    <h3 class="text-xl font-bold">Movie Repository</h3>
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                        <input type="text" id="searchInput" placeholder="Search metadata..." class="pl-12 pr-6 py-3 bg-white/5 border border-white/10 rounded-2xl focus:outline-none focus:border-red-500/50 w-80 transition-all">
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-black/20 text-slate-500 text-[10px] font-black uppercase tracking-widest">
+                            <tr>
+                                <th class="p-8">Poster</th>
+                                <th class="p-8">Identification</th>
+                                <th class="p-8 text-center">Rating</th>
+                                <th class="p-8 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="movieTable" class="divide-y divide-white/5 italic">
+                            <!-- Data injected via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Form -->
+    <div id="movieModal" class="fixed inset-0 bg-black/95 backdrop-blur-md hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-[#0D1117] border border-white/10 w-full max-w-2xl rounded-[3rem] p-12 overflow-y-auto max-h-[90vh] custom-scrollbar shadow-2xl">
+            <h3 id="modalTitle" class="text-3xl font-black text-white uppercase italic tracking-tighter mb-10">Register New Movie</h3>
+            <form id="movieForm" class="grid grid-cols-2 gap-6">
+                <input type="hidden" id="movieId">
+                <div class="col-span-2">
+                    <label class="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest text-left">Movie Title</label>
+                    <input type="text" id="title" required class="w-full bg-[#161B22] border border-white/10 rounded-2xl px-6 py-4 focus:border-red-500 outline-none transition text-white">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest text-left">Release Year</label>
+                    <input type="number" id="release_year" required class="w-full bg-[#161B22] border border-white/10 rounded-2xl px-6 py-4 focus:border-red-500 outline-none transition text-white">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest text-left">Rating (0-10)</label>
+                    <input type="number" id="rating" step="0.1" min="0" max="10" required class="w-full bg-[#161B22] border border-white/10 rounded-2xl px-6 py-4 focus:border-red-500 outline-none transition text-white">
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest text-left">Genres</label>
+                    <input type="text" id="genres" placeholder="Action, Drama..." class="w-full bg-[#161B22] border border-white/10 rounded-2xl px-6 py-4 focus:border-red-500 outline-none transition text-white">
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-[10px] font-black text-red-500 mb-2 uppercase tracking-widest text-left font-bold">Poster URL</label>
+                    <input type="url" id="cover_url" placeholder="https://..." class="w-full bg-[#161B22] border border-red-900/30 rounded-2xl px-6 py-4 focus:border-red-500 outline-none transition text-xs text-red-200">
+                </div>
+                <div class="col-span-2 space-y-4">
+                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest text-left">Description</label>
+                    <textarea id="description" rows="3" class="w-full bg-[#161B22] border border-white/10 rounded-2xl px-6 py-4 focus:border-red-500 transition text-sm italic text-white"></textarea>
+                </div>
+                <div class="col-span-2 flex space-x-4 mt-6 text-left">
+                    <button type="button" onclick="closeModal()" class="flex-1 py-5 border border-white/10 rounded-[1.5rem] font-bold hover:bg-white/5 transition uppercase text-[10px] tracking-widest">Cancel</button>
+                    <button type="submit" class="flex-1 py-5 bg-red-600 rounded-[1.5rem] font-black uppercase text-[10px] tracking-widest hover:bg-red-700 transition shadow-xl shadow-red-600/20">Save Metadata</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Detail Quick View -->
+    <div id="previewModal" class="fixed inset-0 bg-black/95 backdrop-blur-md hidden z-[100] flex items-center justify-center p-4">
+        <div class="absolute inset-0 cursor-zoom-out" onclick="closePreview()"></div>
+        <div class="relative bg-[#0D1117] border border-white/5 w-full max-w-4xl rounded-[3.5rem] shadow-2xl overflow-hidden flex flex-col md:flex-row z-10">
+            <div class="md:w-1/3 bg-black flex items-center justify-center p-2">
+                <img id="detailCover" src="" class="w-full h-full object-cover rounded-[2.5rem] shadow-2xl border border-white/5">
+            </div>
+            <div class="md:w-2/3 p-12 flex flex-col justify-center">
+                <div class="flex justify-between items-start mb-8">
+                    <div>
+                        <h2 id="detailTitle" class="text-4xl font-black text-white leading-tight uppercase italic tracking-tighter">Movie Title</h2>
+                        <p id="detailYearGenre" class="text-red-500 font-bold text-[10px] uppercase tracking-[0.3em] mt-3">YEAR • GENRE</p>
+                    </div>
+                    <div class="bg-yellow-500/10 border border-yellow-500/20 px-5 py-3 rounded-3xl text-yellow-500 text-center">
+                        <span id="detailRating" class="font-black text-2xl tracking-tighter italic">⭐ 0.0</span>
+                    </div>
+                </div>
+                <div class="space-y-6 text-left">
+                    <h4 class="text-[9px] font-black text-slate-600 uppercase tracking-widest">Synopsis</h4>
+                    <p id="detailDescription" class="text-slate-300 leading-relaxed text-sm italic"></p>
+                    <button onclick="closePreview()" class="mt-10 w-full py-4 border border-white/5 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-white hover:text-black transition-all">Close Details</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        let allMovies = []; 
+
+        if (!token || user.role !== 'admin') {
+            localStorage.clear();
+            window.location.href = '/admin-login';
+        }
+
+        // 1. Data Loader
+        async function loadData() {
+            try {
+                const [resStats, resMovies] = await Promise.all([
+                    fetch('/api/admin/stats', { headers: { 'Authorization': `Bearer ${token}` }}),
+                    fetch('/api/admin/movies', { headers: { 'Authorization': `Bearer ${token}` }})
+                ]);
+                
+                const stats = await resStats.json();
+                allMovies = await resMovies.json();
+
+                document.getElementById('totalMovies').innerText = stats.total_movies;
+                document.getElementById('totalHits').innerText = stats.total_api_hits;
+                
+// Perhitungan rata-rata yang lebih aman
+const avgRating = allMovies.length > 0 
+    ? (allMovies.reduce((total, movie) => {
+        // Pastikan rating diubah ke angka (float) dan jika NULL/kosong anggap 0
+        const val = parseFloat(movie.rating) || 0;
+        return total + val;
+    }, 0) / allMovies.length).toFixed(1) 
+    : "0.0";
+
+document.getElementById('avgRating').innerText = avgRating;
+                document.getElementById('avgRating').innerText = avgRating;
+                document.getElementById('lastUpdated').innerText = new Date().toLocaleTimeString();
+
+                renderTable(allMovies);
+            } catch (err) { console.error(err); }
+        }
+
+        function renderTable(data) {
+            document.getElementById('movieTable').innerHTML = data.map((m, index) => `
+                <tr class="hover:bg-white/[0.02] transition-colors group">
+                    <td class="p-8">
+                        <div class="relative group w-16 h-24 cursor-zoom-in" onclick="showMovieDetail(${index})">
+                            <img src="${m.cover_url ? m.cover_url.trim() : ''}" 
+                                 class="w-full h-full object-cover rounded-2xl border border-white/5 shadow-2xl group-hover:border-red-500 transition-all" 
+                                 onerror="this.onerror=null; this.src='https://dummyimage.com/100x150/161b22/ffffff&text=Error';">
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 rounded-2xl flex items-center justify-center transition-opacity text-lg italic font-black">VIEW</div>
+                        </div>
+                    </td>
+                    <td class="p-8">
+                        <div class="font-black text-white text-xl leading-tight uppercase italic tracking-tighter">${m.title}</div>
+                        <div class="text-slate-500 text-[10px] mt-2 uppercase tracking-widest font-bold">${m.release_year} • ${m.genres || 'N/A'}</div>
+                    </td>
+                    <td class="p-8 text-center">
+                        <span class="text-yellow-500 font-black text-lg italic">⭐ ${m.rating}</span>
+                    </td>
+                    <td class="p-8 text-right space-x-6 font-black uppercase text-[10px] tracking-widest">
+                        <button onclick="editMovie(${m.id})" class="text-blue-400 hover:text-white transition">Edit</button>
+                        <button onclick="deleteMovie(${m.id})" class="text-red-500 hover:text-white transition">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // 2. Search
+        document.getElementById('searchInput').oninput = (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = allMovies.filter(m => m.title.toLowerCase().includes(term) || m.genres?.toLowerCase().includes(term));
+            renderTable(filtered);
+        };
+
+        // 3. Detail
+        function showMovieDetail(index) {
+            const m = allMovies[index];
+            document.getElementById('detailCover').src = m.cover_url;
+            document.getElementById('detailTitle').innerText = m.title;
+            document.getElementById('detailYearGenre').innerText = `${m.release_year} • ${m.genres}`;
+            document.getElementById('detailRating').innerText = `⭐ ${m.rating}`;
+            document.getElementById('detailDescription').innerText = m.description || "No synopsis available.";
+            document.getElementById('previewModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // 4. CRUD
+        async function editMovie(id) {
+            const res = await fetch(`/api/admin/movies/${id}`, { headers: { 'Authorization': `Bearer ${token}` }});
+            const m = await res.json();
+            document.getElementById('movieId').value = m.id;
+            document.getElementById('title').value = m.title;
+            document.getElementById('release_year').value = m.release_year;
+            document.getElementById('rating').value = m.rating;
+            document.getElementById('genres').value = m.genres;
+            document.getElementById('description').value = m.description;
+            document.getElementById('cover_url').value = m.cover_url;
+            document.getElementById('modalTitle').innerText = "Update Entry";
+            openModal();
+        }
+
+        document.getElementById('movieForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('movieId').value;
+            const data = {
+                title: document.getElementById('title').value,
+                release_year: document.getElementById('release_year').value,
+                rating: document.getElementById('rating').value,
+                genres: document.getElementById('genres').value,
+                description: document.getElementById('description').value,
+                cover_url: document.getElementById('cover_url').value
+            };
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `/api/admin/movies/${id}` : '/api/admin/movies';
+            const res = await fetch(url, { method, headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+            if(res.ok) {
+                Swal.fire({ icon: 'success', title: 'Database Updated', background: '#0D1117', color: '#fff', timer: 1500, showConfirmButton: false });
+                closeModal(); loadData();
+            }
+        };
+
+        async function deleteMovie(id) {
+            const res = await Swal.fire({ title: 'Purge Entry?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', background: '#0D1117', color: '#fff' });
+            if(res.isConfirmed) {
+                await fetch(`/api/admin/movies/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` }});
+                loadData();
+            }
+        }
+
+        // Utils
+        function openModal() { document.getElementById('movieModal').classList.remove('hidden'); }
+        function closeModal() { document.getElementById('movieModal').classList.add('hidden'); document.getElementById('movieForm').reset(); document.getElementById('movieId').value = ""; document.getElementById('modalTitle').innerText = "Register New Movie"; }
+        function closePreview() { document.getElementById('previewModal').classList.add('hidden'); document.body.style.overflow = 'auto'; }
+        function logout() { localStorage.clear(); window.location.href = '/admin-login'; }
+        window.onload = loadData;
+    </script>
+</body>
+</html>
