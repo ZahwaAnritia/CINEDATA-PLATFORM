@@ -1,0 +1,12 @@
+# Folder library (sangat berat, jangan diupload)
+node_modules/
+
+# File rahasia (Database password, JWT secret)
+.env
+
+# Log error
+npm-debug.log*
+
+# File sistem (khusus Mac/Windows)
+.DS_Store
+Thumbs.db
