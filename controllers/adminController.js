@@ -1,23 +1,18 @@
 const db = require('../config/db');
 
 // 1. Ambil Statistik Global untuk Dashboard Admin
+// controllers/adminController.js
+
 exports.getAdminStats = async (req, res) => {
     try {
         const [movies] = await db.execute('SELECT COUNT(*) as count FROM movies');
-        const [users] = await db.execute('SELECT COUNT(*) as count FROM users');
+        const [users] = await db.execute('SELECT COUNT(*) as count FROM users WHERE role = "developer"');
         const [usage] = await db.execute('SELECT COUNT(*) as count FROM api_usage');
-        const [recentUsage] = await db.execute(`
-            SELECT u.*, k.api_key 
-            FROM api_usage u 
-            JOIN api_keys k ON u.api_key_id = k.id 
-            ORDER BY u.created_at DESC LIMIT 5
-        `);
-
+        
         res.json({ 
             total_movies: movies[0].count, 
-            total_users: users[0].count, 
-            total_api_hits: usage[0].count,
-            recent_logs: recentUsage
+            total_users: users[0].count, // Tambahkan ini
+            total_api_hits: usage[0].count 
         });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -148,4 +143,28 @@ exports.updateMovie = async (req, res) => {
         console.error(err);
         res.status(500).json({ error: err.message });
     }
+};
+
+// controllers/adminController.js
+
+// 1. Ambil semua User (Developer)
+exports.getAllUsers = async (req, res) => {
+    try {
+        const [rows] = await db.execute('SELECT id, username, email, created_at FROM users WHERE role = "developer"');
+        res.json(rows);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+};
+
+// 2. Ambil Log Trafik Global (Seluruh Sistem)
+exports.getGlobalLogs = async (req, res) => {
+    try {
+        const [rows] = await db.execute(`
+            SELECT u.*, k.api_key, usr.username 
+            FROM api_usage u 
+            JOIN api_keys k ON u.api_key_id = k.id 
+            JOIN users usr ON k.user_id = usr.id 
+            ORDER BY u.created_at DESC LIMIT 50
+        `);
+        res.json(rows);
+    } catch (err) { res.status(500).json({ error: err.message }); }
 };

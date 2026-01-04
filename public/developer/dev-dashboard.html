@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
-    <title>Dev Console | CineData API</title>
+    <title>Developer Hub | CineData Premium API</title>
     
-    <!-- Scripts & Frameworks -->
+    <!-- Frameworks & Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
@@ -23,143 +23,222 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--dark-bg); color: #e2e8f0; }
         .font-mono { font-family: 'Fira Code', monospace; }
         
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        /* Smooth Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--primary-red); border-radius: 10px; }
         
-        .sidebar-item { transition: all 0.2s ease; border-left: 3px solid transparent; }
+        /* Interactive Elements */
+        .sidebar-item { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-left: 3px solid transparent; }
         .sidebar-item:hover { background: rgba(239, 68, 68, 0.05); color: white; border-left: 3px solid var(--primary-red); }
         .sidebar-item.active { background: rgba(239, 68, 68, 0.1); color: var(--primary-red); border-left: 3px solid var(--primary-red); }
 
-        .glass-card { background: var(--glass-card); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); }
-        .active-tab { background: rgba(239, 68, 68, 0.1) !important; border: 1px solid rgba(239, 68, 68, 0.5) !important; color: #ef4444 !important; }
+        .glass-card { background: var(--glass-card); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); }
+        .active-tab { background: rgba(239, 68, 68, 0.15) !important; border: 1px solid rgba(239, 68, 68, 0.5) !important; color: #fff !important; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-up { animation: slideUp 0.5s ease forwards; }
     </style>
 </head>
-<body class="min-h-screen selection:bg-red-500/30">
+<body class="min-h-screen selection:bg-red-500/30 overflow-x-hidden">
 
     <div class="flex">
-        <!-- SIDEBAR -->
-        <aside class="w-64 h-screen glass-card sticky top-0 flex flex-col z-20 overflow-hidden shadow-2xl">
+        <!-- SIDEBAR (PROFESSIONAL RAMPING) -->
+        <aside class="w-72 h-screen glass-card sticky top-0 flex flex-col z-30 shadow-2xl">
             <div class="p-8 pb-12">
-                <div class="text-2xl font-black italic tracking-tighter text-white">CINE<span class="text-red-500">DATA</span></div>
-                <div class="text-[9px] text-slate-500 font-bold tracking-[0.3em] uppercase mt-1">Dev Console</div>
+                <div class="text-3xl font-black italic tracking-tighter text-white">CINE<span class="text-red-500">DATA</span></div>
+                <div class="text-[10px] text-slate-500 font-bold tracking-[0.4em] uppercase mt-2 opacity-60">Professional Console</div>
             </div>
             
             <nav class="flex-1 px-4 space-y-2">
-                <a href="#" class="sidebar-item active flex items-center space-x-4 p-3 rounded-xl text-xs font-bold uppercase tracking-widest">
-                    <i class="fas fa-terminal w-5"></i>
-                    <span>Console</span>
+                <a href="#" class="sidebar-item active flex items-center space-x-4 p-4 rounded-2xl text-xs font-black uppercase tracking-widest">
+                    <i class="fas fa-chart-line w-5 text-lg"></i>
+                    <span>Analytics</span>
                 </a>
-                <a href="/docs" class="sidebar-item flex items-center space-x-4 p-3 rounded-xl text-xs font-bold uppercase tracking-widest text-slate-400">
-                    <i class="fas fa-book w-5"></i>
-                    <span>Docs API</span>
+                <a href="/docs" target="_blank" class="sidebar-item flex items-center space-x-4 p-4 rounded-2xl text-xs font-black uppercase tracking-widest text-slate-400 group">
+                    <i class="fas fa-book-open w-5 text-lg transition group-hover:text-red-500"></i>
+                    <span>Documentation</span>
                 </a>
-                <a href="/" target="_blank" class="sidebar-item flex items-center space-x-4 p-3 rounded-xl text-xs font-bold uppercase tracking-widest text-slate-400 group">
-                    <i class="fas fa-globe w-5 transition group-hover:text-red-500"></i>
-                    <span>View Site</span>
+                <a href="/" target="_blank" class="sidebar-item flex items-center space-x-4 p-4 rounded-2xl text-xs font-black uppercase tracking-widest text-slate-400 group">
+                    <i class="fas fa-external-link-alt w-5 text-lg transition group-hover:text-red-500"></i>
+                    <span>Public Site</span>
+                </a>
+                <div class="pt-10 pb-4 px-4 text-[9px] font-black text-slate-600 uppercase tracking-[0.3em]">Management</div>
+                <a href="#" onclick="openProfileModal()" class="sidebar-item flex items-center space-x-4 p-4 rounded-2xl text-xs font-black uppercase tracking-widest text-slate-400 group">
+                    <i class="fas fa-user-gear w-5 text-lg transition group-hover:text-red-500"></i>
+                    <span>Account Settings</span>
                 </a>
             </nav>
 
-            <div class="p-6 border-t border-white/5">
-                <div class="bg-white/[0.02] border border-white/5 p-4 rounded-2xl flex items-center justify-between">
-                    <div class="flex flex-col min-w-0">
-                        <span class="text-[9px] text-slate-500 font-black uppercase tracking-widest">Signed in as</span>
-                        <span id="userDisplayName" class="text-white text-xs font-bold truncate pr-2">Developer</span>
+            <!-- User Status & Logout -->
+            <div class="p-6 border-t border-white/5 bg-black/20">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3 min-w-0">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-red-800 flex items-center justify-center text-xs font-bold border border-white/10 flex-shrink-0 shadow-lg">
+                            <span id="userInitial">D</span>
+                        </div>
+                        <div class="flex flex-col min-w-0">
+                            <span id="userDisplayName" class="text-white text-xs font-black truncate uppercase tracking-tight">Developer</span>
+                            <span class="text-[9px] text-green-500 font-bold uppercase tracking-widest flex items-center">
+                                <span class="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5 animate-pulse"></span> Verified
+                            </span>
+                        </div>
                     </div>
-                    <button onclick="logout()" class="p-2.5 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all">
-                        <i class="fas fa-power-off text-xs"></i>
+                    <button onclick="logout()" class="p-3 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-xl border border-red-500/20" title="Secure Logout">
+                        <i class="fas fa-sign-out-alt text-xs"></i>
                     </button>
                 </div>
             </div>
         </aside>
 
-        <!-- MAIN CONTENT -->
-        <main class="flex-1 p-10 max-w-7xl mx-auto overflow-y-auto h-screen custom-scrollbar">
+        <!-- MAIN HUB -->
+        <main class="flex-1 p-10 max-w-[1400px] mx-auto overflow-y-auto h-screen custom-scrollbar">
             
-            <!-- Stats -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                <div class="glass-card p-8 rounded-[2rem] border-t-4 border-t-red-500 shadow-xl text-center">
-                    <p class="text-slate-500 text-[10px] font-black uppercase mb-2">Requests</p>
-                    <h2 id="totalCalls" class="text-6xl font-black text-white leading-none">0</h2>
+            <!-- Welcome Header -->
+            <header class="flex justify-between items-end mb-12 animate-up">
+                <div>
+                    <h1 class="text-4xl font-black text-white tracking-tighter uppercase italic">Control Center</h1>
+                    <p class="text-slate-500 text-sm mt-2 font-medium">Monitoring API infrastructure and security credentials.</p>
+                    <span id="lastUpdated" class="text-red-500 font-bold italic">Syncing...</span>
                 </div>
-                <div class="glass-card p-8 rounded-[2rem] border-t-4 border-t-green-500 shadow-xl text-center">
-                    <p class="text-slate-500 text-[10px] font-black uppercase mb-2">Avg Latency</p>
-                    <h2 id="avgLatency" class="text-6xl font-black text-green-500 leading-none">0<span class="text-xs font-normal opacity-50 ml-1">MS</span></h2>
+                <div class="flex items-center space-x-4 bg-white/5 border border-white/5 p-2 rounded-2xl">
+                    <div class="text-right px-4">
+                        <div class="text-[9px] text-slate-500 font-black uppercase tracking-widest">Network Speed</div>
+                        <div class="text-green-500 font-bold text-xs">99.9% Uptime</div>
+                    </div>
+                    <button onclick="loadDashboard()" class="w-12 h-12 glass-card rounded-xl flex items-center justify-center text-slate-400 hover:text-white transition group">
+                        <i class="fas fa-sync-alt group-active:rotate-180 transition-transform duration-500"></i>
+                    </button>
                 </div>
-                <div class="glass-card p-8 rounded-[2.5rem] border-t-4 border-t-blue-500 shadow-xl flex flex-col justify-center items-center">
-                    <p class="text-slate-500 text-[10px] font-black uppercase mb-2 tracking-widest text-center">Status</p>
-                    <h2 class="text-3xl font-black text-blue-400 italic tracking-tighter uppercase">Healthy</h2>
+            </header>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                <div class="glass-card p-10 rounded-[3rem] hover-lift border-t-4 border-t-red-600 shadow-2xl relative overflow-hidden">
+                    <i class="fas fa-bolt-lightning absolute -right-4 -bottom-4 text-8xl text-white/[0.02]"></i>
+                    <p class="text-slate-500 text-[11px] font-black uppercase tracking-[0.3em] mb-4">Total Requests</p>
+                    <h2 id="totalCalls" class="text-7xl font-black text-white leading-none tracking-tighter">0</h2>
+                </div>
+                <div class="glass-card p-10 rounded-[3rem] hover-lift border-t-4 border-t-green-600 shadow-2xl relative overflow-hidden">
+                    <i class="fas fa-gauge-high absolute -right-4 -bottom-4 text-8xl text-white/[0.02]"></i>
+                    <p class="text-slate-500 text-[11px] font-black uppercase tracking-[0.3em] mb-4">Avg Latency</p>
+                    <h2 id="avgLatency" class="text-7xl font-black text-green-500 leading-none tracking-tighter">0<span class="text-2xl font-normal opacity-50 ml-2">ms</span></h2>
+                </div>
+                <div class="glass-card p-10 rounded-[3rem] hover-lift border-t-4 border-t-blue-600 shadow-2xl flex flex-col justify-center items-center">
+                    <p class="text-slate-500 text-[11px] font-black uppercase tracking-[0.3em] mb-4">Service Layer</p>
+                    <h2 class="text-5xl font-black text-blue-400 italic uppercase tracking-tighter">Healthy</h2>
                 </div>
             </div>
 
+            <!-- Middle Tier: Keys & Logs -->
             <div class="grid lg:grid-cols-3 gap-8 mb-12">
-                <!-- Credentials -->
-                <div class="lg:col-span-1 glass-card p-8 rounded-[3rem] shadow-xl flex flex-col">
-                    <h3 class="text-xs font-black text-white uppercase tracking-widest mb-8 flex items-center">
-                        <i class="fas fa-fingerprint mr-3 text-red-500"></i> API Credentials
-                    </h3>
-                    <div id="keysContainer" class="space-y-4 flex-1"></div>
-                    <button onclick="generateNewKey()" class="mt-8 py-4 bg-white text-black font-black rounded-2xl hover:bg-red-600 hover:text-white transition shadow-xl uppercase text-[10px] tracking-widest italic">+ Create Key</button>
+                <!-- Credentials Section -->
+                <div class="lg:col-span-1 glass-card p-10 rounded-[3.5rem] shadow-2xl flex flex-col">
+                    <div class="flex justify-between items-center mb-10">
+                        <h3 class="text-lg font-black text-white uppercase italic tracking-widest">Credentials</h3>
+                        <i class="fas fa-shield-halved text-red-500/50"></i>
+                    </div>
+                    <div id="keysContainer" class="space-y-5 flex-1 custom-scrollbar overflow-y-auto max-h-[400px] pr-2">
+                        <!-- Keys load here -->
+                    </div>
+                    <button onclick="generateNewKey()" class="mt-10 py-5 bg-white text-black font-black rounded-3xl hover:bg-red-600 hover:text-white transition-all shadow-2xl uppercase text-[10px] tracking-[0.25em]">
+                        <i class="fas fa-plus-circle mr-2"></i> Generate New Access Key
+                    </button>
                 </div>
 
-                <!-- Logs -->
-                <div class="lg:col-span-2 glass-card rounded-[3rem] overflow-hidden shadow-xl flex flex-col h-full">
-                    <div class="p-6 border-b border-white/5 bg-white/[0.01]">
-                        <h3 class="text-xs font-black text-white uppercase tracking-widest">Live Activity Logs</h3>
+                <!-- Logs Table Section -->
+                <div class="lg:col-span-2 glass-card rounded-[3.5rem] overflow-hidden shadow-2xl flex flex-col h-full">
+                    <div class="p-10 border-b border-white/5 bg-white/[0.01] flex justify-between items-center">
+                        <h3 class="text-lg font-black text-white uppercase italic tracking-widest">Real-time Telemetry</h3>
+                        <span class="text-[9px] text-slate-500 font-bold bg-white/5 px-3 py-1 rounded-full uppercase">Monitoring Active</span>
                     </div>
-                    <div class="overflow-x-auto flex-1 h-[250px] custom-scrollbar">
+                    <div class="overflow-x-auto flex-1 h-[350px] custom-scrollbar">
                         <table class="w-full text-left">
-                            <thead class="bg-black/40 text-slate-600 text-[9px] font-black uppercase tracking-widest">
-                                <tr><th class="p-5">Path</th><th class="p-5 text-center">Status</th><th class="p-5 text-right">Timestamp</th></tr>
+                            <thead class="bg-black/40 text-slate-600 text-[10px] font-black uppercase tracking-[0.3em] sticky top-0 z-10 backdrop-blur-md">
+                                <tr>
+                                    <th class="p-6">Endpoint Path</th>
+                                    <th class="p-6 text-center">Status</th>
+                                    <th class="p-6 text-right">Activity Timestamp</th>
+                                </tr>
                             </thead>
-                            <tbody id="usageBody" class="divide-y divide-white/5 text-[12px]"></tbody>
+                            <tbody id="usageBody" class="divide-y divide-white/5 text-[13px]">
+                                <!-- Logs load here -->
+                            </tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <!-- API Playground -->
-            <div class="glass-card rounded-[3.5rem] overflow-hidden shadow-2xl mb-12">
-                <div class="p-10 border-b border-white/5 bg-white/[0.02]">
-                    <h3 class="text-2xl font-black text-white uppercase italic tracking-tighter">Interactive Sandbox</h3>
+            <!-- Complex API Sandbox -->
+            <div class="glass-card rounded-[4rem] overflow-hidden shadow-2xl mb-12 animate-up">
+                <div class="p-12 border-b border-white/5 bg-white/[0.02] flex justify-between items-center">
+                    <div>
+                        <h3 class="text-3xl font-black text-white uppercase italic tracking-tighter">Interactive Sandbox</h3>
+                        <p class="text-slate-500 text-sm mt-2">Test CineData production endpoints directly in the browser.</p>
+                    </div>
+                    <div id="responseStatus" class="hidden px-6 py-2.5 rounded-2xl text-xs font-black tracking-widest uppercase border shadow-inner"></div>
                 </div>
+                
                 <div class="grid lg:grid-cols-5 divide-x divide-white/5">
-                    <div class="lg:col-span-2 p-10 space-y-8 bg-black/10">
-                        <div>
-                            <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-4 italic text-left">1. Target Resource</label>
-                            <div class="flex flex-col space-y-3">
-                                <div class="flex">
-                                    <span class="bg-red-500/10 text-red-500 border border-red-500/20 border-r-0 px-5 py-4 rounded-l-2xl font-black text-xs">GET</span>
-                                    <input type="text" id="playgroundEndpoint" value="/api/v1/movies" class="w-full bg-[#161B22] border border-white/10 rounded-r-2xl px-5 py-4 focus:border-red-500 outline-none text-xs font-mono text-slate-300">
+                    <!-- Sandbox Controls -->
+                    <div class="lg:col-span-2 p-12 space-y-10 bg-black/20">
+                        <div class="space-y-4">
+                            <label class="text-[11px] font-black text-slate-600 uppercase tracking-widest block italic">Step 1: Define Target Route</label>
+                            <div class="flex flex-col space-y-4">
+                                <div class="flex shadow-2xl">
+                                    <span class="bg-red-500/10 text-red-500 border border-red-500/20 border-r-0 px-6 py-5 rounded-l-[1.5rem] font-black text-xs uppercase flex items-center">GET</span>
+                                    <input type="text" id="playgroundEndpoint" value="/api/v1/movies" 
+                                        class="w-full bg-[#161B22] border border-white/10 rounded-r-[1.5rem] px-6 py-5 focus:border-red-500 outline-none text-sm font-mono text-slate-200">
                                 </div>
-                                <div class="flex gap-2">
-                                    <button onclick="setEndpoint('/api/v1/movies')" class="text-[8px] bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg hover:bg-white/10 transition font-black uppercase">All Movies</button>
-                                    <button onclick="setEndpoint('/api/v1/movies/1')" class="text-[8px] bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg hover:bg-white/10 transition font-black uppercase">Detail ID: 1</button>
+                                <div class="flex gap-2 flex-wrap">
+                                    <button onclick="setEndpoint('/api/v1/movies')" class="text-[9px] bg-white/5 border border-white/10 px-4 py-2 rounded-xl hover:bg-white/10 transition font-black uppercase tracking-widest">Catalog</button>
+                                    <button onclick="setEndpoint('/api/v1/movies/1')" class="text-[9px] bg-white/5 border border-white/10 px-4 py-2 rounded-xl hover:bg-white/10 transition font-black uppercase tracking-widest">Detail: 1</button>
+                                    <button onclick="setEndpoint('/api/v1/movies/search?q=Joker')" class="text-[9px] bg-white/5 border border-white/10 px-4 py-2 rounded-xl hover:bg-white/10 transition font-black uppercase tracking-widest text-red-500/80">Search: Joker</button>
                                 </div>
                             </div>
                         </div>
-                        <div>
-                            <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-4 italic text-left">2. x-api-key Authentication</label>
-                            <input type="text" id="playgroundKey" placeholder="Paste your key here" class="w-full bg-[#161B22] border border-white/10 rounded-2xl px-5 py-4 focus:border-red-500 outline-none text-red-500 font-mono text-xs shadow-inner">
+                        
+                        <div class="space-y-4">
+                            <label class="text-[11px] font-black text-slate-600 uppercase tracking-widest block italic">Step 2: Authenticate Session</label>
+                            <div class="relative">
+                                <input type="text" id="playgroundKey" placeholder="Paste x-api-key here..." 
+                                    class="w-full bg-[#161B22] border border-white/10 rounded-[1.5rem] px-6 py-5 focus:border-red-500 outline-none text-red-500 font-mono text-sm">
+                                <i class="fas fa-lock absolute right-6 top-1/2 -translate-y-1/2 text-slate-700"></i>
+                            </div>
+                            <p class="text-[9px] text-slate-600 uppercase font-bold tracking-widest px-2">* Required for all production routes</p>
                         </div>
-                        <button onclick="testRequest()" id="btnTest" class="w-full py-5 bg-red-600 text-white font-black rounded-2xl shadow-xl uppercase tracking-widest text-xs transition-all hover:bg-red-700">Execute Call 🚀</button>
+
+                        <button onclick="testRequest()" id="btnTest" class="w-full py-6 bg-gradient-to-br from-red-600 to-red-800 text-white font-black rounded-3xl hover:shadow-[0_0_50px_-10px_rgba(239,68,68,0.4)] transition-all active:scale-[0.97] uppercase tracking-[0.2em] text-xs">
+                            <i class="fas fa-paper-plane mr-2"></i> Execute Connection
+                        </button>
                     </div>
                     
-                    <div class="lg:col-span-3 p-10 bg-black/40 flex flex-col min-h-[550px]">
-                        <div class="flex justify-between items-center mb-6">
-                            <span class="text-[10px] font-black text-slate-700 uppercase tracking-[0.25em]">Response JSON</span>
-                            <div id="responseStatus" class="hidden px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest"></div>
+                    <!-- Sandbox Results -->
+                    <div class="lg:col-span-3 p-12 bg-black/40 flex flex-col min-h-[650px]">
+                        <div class="flex justify-between items-center mb-8 border-b border-white/5 pb-6">
+                            <span class="text-[11px] font-black text-slate-600 uppercase tracking-[0.3em]">System Response Hub</span>
+                            <button onclick="copyResponse()" class="text-[10px] font-black text-slate-500 hover:text-white transition uppercase tracking-widest">
+                                <i class="fas fa-copy mr-2"></i> Copy Body
+                            </button>
                         </div>
-                        <div class="h-[250px] bg-[#050810] rounded-[2.5rem] p-8 border border-white/5 font-mono text-[11px] overflow-auto custom-scrollbar shadow-inner mb-8">
-                            <pre id="jsonResult" class="text-blue-400 italic opacity-40 leading-relaxed">// Initialize call to fetch data...</pre>
+                        
+                        <div class="h-[350px] bg-[#050810] rounded-[2.5rem] p-10 border border-white/5 font-mono text-[13px] overflow-auto custom-scrollbar shadow-inner mb-10 relative group">
+                            <div class="absolute top-4 right-6 text-[9px] font-bold text-slate-800 uppercase tracking-widest select-none group-hover:text-red-500/20 transition-colors">JSON Body</div>
+                            <pre id="jsonResult" class="text-blue-400 italic opacity-40 leading-relaxed font-medium">// Waiting for incoming traffic...</pre>
                         </div>
-                        <!-- Visual Preview -->
-                        <div id="visualPreview" class="hidden">
-                            <div class="bg-white/5 border border-white/10 p-5 rounded-[2rem] flex items-center space-x-6 border-l-4 border-l-red-500 shadow-2xl animate-fade-in">
-                                <img id="prevImg" src="" class="w-20 h-28 object-cover rounded-xl shadow-lg border border-white/10" onerror="this.src='https://dummyimage.com/100x150/1e293b/ffffff&text=Poster'">
-                                <div class="flex-1 text-left">
-                                    <h4 id="prevTitle" class="text-lg font-bold text-white leading-tight uppercase italic tracking-tighter"></h4>
-                                    <p id="prevMeta" class="text-[10px] text-slate-500 mt-1 uppercase tracking-widest font-black"></p>
-                                    <div id="prevRating" class="mt-2 text-yellow-500 text-sm font-black italic"></div>
+
+                        <!-- Visual Response Rendering (WOW Factor) -->
+                        <div id="visualPreview" class="hidden animate-up">
+                            <h4 class="text-[10px] font-black text-slate-700 uppercase tracking-[0.3em] mb-6">Visual Data Representation</h4>
+                            <div class="bg-gradient-to-r from-white/[0.04] to-transparent border border-white/10 p-6 rounded-[2.5rem] flex items-center space-x-8 border-l-4 border-l-red-600 shadow-3xl backdrop-blur-sm">
+                                <img id="prevImg" src="" class="w-24 h-36 object-cover rounded-3xl shadow-2xl border border-white/10 transform -rotate-3 group-hover:rotate-0 transition-transform duration-500">
+                                <div class="flex-1 space-y-3">
+                                    <h4 id="prevTitle" class="text-2xl font-black text-white leading-tight uppercase italic tracking-tighter"></h4>
+                                    <div class="flex items-center space-x-4">
+                                        <span id="prevMeta" class="text-[10px] text-slate-500 font-black uppercase tracking-widest"></span>
+                                        <div id="prevRating" class="text-yellow-500 text-sm font-black italic"></div>
+                                    </div>
+                                    <p class="text-[11px] text-slate-600 uppercase font-bold tracking-widest leading-relaxed">Status: Decoded Successfully</p>
                                 </div>
                             </div>
                         </div>
@@ -167,43 +246,90 @@
                 </div>
             </div>
 
-            <!-- API REFERENCE / SCHEMA REFERENCE (Dikembalikan) -->
-            <div class="glass-card rounded-[3.5rem] overflow-hidden shadow-2xl mb-20">
-                <div class="p-10 border-b border-white/5 bg-white/[0.02]">
-                    <h3 class="text-2xl font-black text-white uppercase italic tracking-tighter">Response Reference</h3>
-                    <p class="text-sm text-slate-500 mt-1 text-left">Standard schema for CineData API responses.</p>
+            <!-- Massive Response Reference (Complex Documentation) -->
+            <div class="glass-card rounded-[4rem] overflow-hidden shadow-2xl mb-24 animate-up">
+                <div class="p-12 border-b border-white/5 bg-white/[0.02]">
+                    <h3 class="text-3xl font-black text-white uppercase italic tracking-tighter">Endpoint Architecture Reference</h3>
+                    <p class="text-sm text-slate-500 mt-2 text-left">Detailed JSON schema definitions for all possible server states.</p>
                 </div>
-                <div class="p-10 grid lg:grid-cols-5 gap-10">
-                    <div class="lg:col-span-1 space-y-2 flex flex-col">
-                        <button onclick="showExample(200)" id="tab-200" class="status-tab text-left px-5 py-4 rounded-xl border border-white/5 text-[10px] font-black text-slate-500 transition-all uppercase tracking-widest active-tab">200 Success</button>
-                        <button onclick="showExample(401)" id="tab-401" class="status-tab text-left px-5 py-4 rounded-xl border border-white/5 text-[10px] font-black text-slate-500 transition-all uppercase tracking-widest">401 Unauth</button>
-                        <button onclick="showExample(404)" id="tab-404" class="status-tab text-left px-5 py-4 rounded-xl border border-white/5 text-[10px] font-black text-slate-500 transition-all uppercase tracking-widest">404 Not Found</button>
-                        <button onclick="showExample(500)" id="tab-500" class="status-tab text-left px-5 py-4 rounded-xl border border-white/5 text-[10px] font-black text-slate-500 transition-all uppercase tracking-widest">500 Server Error</button>
+                <div class="p-12 grid lg:grid-cols-5 gap-12">
+                    <!-- Complex Tabs -->
+                    <div class="lg:col-span-1 space-y-3 flex flex-col">
+                        <label class="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] block mb-4">Select Status Code</label>
+                        <button onclick="showExample(200)" id="tab-200" class="status-tab text-left px-6 py-4 rounded-2xl border border-white/5 text-[11px] font-black text-slate-500 transition-all uppercase tracking-[0.2em] active-tab hover:bg-white/5">200 Success</button>
+                        <button onclick="showExample(400)" id="tab-400" class="status-tab text-left px-6 py-4 rounded-2xl border border-white/5 text-[11px] font-black text-slate-500 transition-all uppercase tracking-[0.2em] hover:bg-white/5">400 Bad Request</button>
+                        <button onclick="showExample(401)" id="tab-401" class="status-tab text-left px-6 py-4 rounded-2xl border border-white/5 text-[11px] font-black text-slate-500 transition-all uppercase tracking-[0.2em] hover:bg-white/5">401 Auth Required</button>
+                        <button onclick="showExample(403)" id="tab-403" class="status-tab text-left px-6 py-4 rounded-2xl border border-white/5 text-[11px] font-black text-slate-500 transition-all uppercase tracking-[0.2em] hover:bg-white/5">403 Key Forbidden</button>
+                        <button onclick="showExample(404)" id="tab-404" class="status-tab text-left px-6 py-4 rounded-2xl border border-white/5 text-[11px] font-black text-slate-500 transition-all uppercase tracking-[0.2em] hover:bg-white/5">404 Resource Not Found</button>
+                        <button onclick="showExample(429)" id="tab-429" class="status-tab text-left px-6 py-4 rounded-2xl border border-white/5 text-[11px] font-black text-slate-500 transition-all uppercase tracking-[0.2em] hover:bg-white/5 text-orange-600/60">429 Rate Exceeded</button>
+                        <button onclick="showExample(500)" id="tab-500" class="status-tab text-left px-6 py-4 rounded-2xl border border-white/5 text-[11px] font-black text-slate-500 transition-all uppercase tracking-[0.2em] hover:bg-white/5 text-red-600/60">500 Server Error</button>
                     </div>
-                    <div class="lg:col-span-4 bg-black/50 rounded-[2.5rem] p-10 border border-white/5 font-mono text-[13px] shadow-inner">
-                        <pre id="exampleCode" class="text-blue-300 leading-relaxed"></pre>
+                    <!-- Display -->
+                    <div class="lg:col-span-4 bg-black/60 rounded-[3rem] p-12 border border-white/5 font-mono text-[13px] shadow-2xl relative">
+                        <div class="absolute top-8 right-12 text-[10px] font-black text-slate-700 uppercase tracking-widest opacity-60">Schema Definition v1.0</div>
+                        <pre id="exampleCode" class="text-blue-400 leading-relaxed font-medium"></pre>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
+    <!-- Account Settings Modal (RESTORED) -->
+    <div id="profileModal" class="fixed inset-0 bg-black/95 backdrop-blur-xl hidden z-[100] flex items-center justify-center p-6">
+        <div class="bg-[#0D1117] border border-white/10 w-full max-w-md rounded-[3.5rem] p-12 shadow-[0_0_100px_-20px_rgba(239,68,68,0.2)] animate-up">
+            <div class="text-center mb-10">
+                <div class="w-20 h-20 bg-red-600/10 rounded-[2rem] flex items-center justify-center mx-auto mb-6 border border-red-500/20 text-red-500 text-3xl">
+                    <i class="fas fa-id-badge"></i>
+                </div>
+                <h3 class="text-2xl font-black text-white uppercase italic tracking-tighter">Security Profile</h3>
+                <p class="text-slate-500 text-[10px] font-bold uppercase tracking-[0.3em] mt-2">Manage your core identity</p>
+            </div>
+            
+            <form id="profileForm" class="space-y-6">
+                <div>
+                    <label class="block text-[10px] font-black text-slate-600 uppercase tracking-widest mb-3 ml-2">Username Alias</label>
+                    <input type="text" id="editUsername" class="w-full bg-[#161B22] border border-white/10 rounded-2xl px-6 py-4 focus:border-red-500 outline-none text-white text-sm font-bold tracking-tight transition-all">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-600 uppercase tracking-widest mb-3 ml-2">Cloud Identity (Email)</label>
+                    <input type="email" id="editEmail" class="w-full bg-[#161B22] border border-white/10 rounded-2xl px-6 py-4 focus:border-red-500 outline-none text-white text-sm font-bold tracking-tight transition-all">
+                </div>
+                <div class="flex space-x-4 pt-6">
+                    <button type="button" onclick="closeProfileModal()" class="flex-1 py-5 border border-white/10 rounded-3xl font-black uppercase text-[10px] tracking-widest hover:bg-white/5 transition">Cancel</button>
+                    <button type="submit" class="flex-1 py-5 bg-red-600 rounded-3xl font-black uppercase text-[10px] tracking-widest hover:bg-red-700 transition shadow-xl shadow-red-600/20">Sync Profile</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
+        // --- 1. CORE AUTH & STATE ---
         const token = localStorage.getItem('token');
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const userJson = localStorage.getItem('user');
+        let user = {};
+        try { user = JSON.parse(userJson || '{}'); } catch(e) { user = {}; }
 
         if (!token || user.role !== 'developer') {
-            localStorage.clear(); window.location.href = '/login'; 
+            localStorage.clear();
+            window.location.href = '/login'; 
         }
+        
+        // Update Profile visuals
         document.getElementById('userDisplayName').innerText = user.username;
+        document.getElementById('userInitial').innerText = user.username ? user.username.charAt(0).toUpperCase() : 'D';
 
+        // --- 2. MASSIVE MOCK DATA FOR DOCS ---
         const examples = {
-            200: { status: "success", count: 2, data: [{ id: 1, title: "The Batman", rating: 7.8 }, { id: 2, title: "Joker", rating: 8.4 }] },
-            401: { status: "error", code: 401, message: "API Key missing in headers." },
-            404: { status: "error", code: 404, message: "Resource not found." },
-            500: { status: "error", code: 500, message: "Internal server error." }
+            200: { status: "success", count: 2, data: [{ id: 1, title: "A Shop for Killers", rating: 8.1, genres: "Action, Thriller" }, { id: 2, title: "Fabricated City", rating: 7.2, genres: "Action, Crime" }], meta: { api_version: "1.0.0", server: "SG-CineData-01" } },
+            400: { status: "error", code: "BAD_REQUEST", message: "Invalid query parameters provided. Check documentation for proper syntax." },
+            401: { status: "error", code: "UNAUTHORIZED", message: "Access denied. Header 'x-api-key' is missing or malformed." },
+            403: { status: "error", code: "FORBIDDEN", message: "Your API Key has been suspended or is no longer active in this tier." },
+            404: { status: "error", code: "NOT_FOUND", message: "The requested movie ID or resource path does not exist in our cloud database." },
+            429: { status: "error", code: "RATE_LIMIT_EXCEEDED", message: "Maximum threshold of 60 requests/min reached. Cooldown required.", reset_time: "45s" },
+            500: { status: "error", code: "INTERNAL_SERVER_ERROR", message: "System failure during database handshake. Engineering team notified." }
         };
 
+        // --- 3. MAIN HUB LOGIC ---
         async function loadDashboard() {
             try {
                 const headers = { 'Authorization': `Bearer ${token}` };
@@ -211,19 +337,28 @@
                     fetch('/api/keys', { headers }),
                     fetch('/api/keys/my-stats', { headers })
                 ]);
-                renderKeys(await resKeys.json());
-                renderStats(await resStats.json());
-            } catch (err) { console.error(err); }
+                const keys = await resKeys.json();
+                const stats = await resStats.json();
+
+                renderKeys(keys);
+                renderStats(stats);
+                document.getElementById('lastUpdated').innerText = `Synced: ${new Date().toLocaleTimeString()} (Real-time)`;
+            } catch (err) { console.error("Cluster Sync Error:", err); }
         }
 
         function renderKeys(keys) {
             const container = document.getElementById('keysContainer');
-            if (!Array.isArray(keys) || keys.length === 0) { container.innerHTML = '<p class="text-slate-700 italic text-xs text-center py-4">No credentials active.</p>'; return; }
+            if (!Array.isArray(keys) || keys.length === 0) {
+                container.innerHTML = '<div class="p-8 text-center glass-card rounded-3xl border-dashed border-white/10"><i class="fas fa-inbox text-2xl text-slate-800 mb-4 block"></i><p class="text-slate-700 italic text-[10px] font-black uppercase tracking-[0.2em]">No Credentials Found</p></div>';
+                return;
+            }
             container.innerHTML = keys.map(k => `
-                <div class="bg-black/30 border border-white/5 p-5 rounded-2xl relative group hover:border-red-500/30 transition-all">
-                    <p class="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1 italic">${k.key_name}</p>
-                    <code class="text-xs text-red-500 font-mono break-all block pr-12">${k.api_key}</code>
-                    <button onclick="copyToClipboard('${k.api_key}')" class="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/5 rounded-xl hover:bg-red-600 transition-all text-xs shadow-xl"><i class="fa-regular fa-copy"></i></button>
+                <div class="bg-black/40 border border-white/5 p-6 rounded-3xl relative group hover:border-red-500/40 transition-all hover:bg-black/60 shadow-inner">
+                    <p class="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-3 italic">${k.key_name}</p>
+                    <code class="text-[11px] text-red-500/80 font-mono break-all block pr-14 leading-relaxed">${k.api_key}</code>
+                    <button onclick="copyToClipboard('${k.api_key}')" class="absolute right-6 top-1/2 -translate-y-1/2 p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-red-600 hover:text-white transition-all text-xs shadow-2xl">
+                        <i class="far fa-copy"></i>
+                    </button>
                 </div>
             `).join('');
         }
@@ -234,17 +369,28 @@
             const avg = usage.length > 0 ? Math.round(usage.reduce((a, b) => a + (b.response_time_ms || 0), 0) / usage.length) : 0;
             document.getElementById('avgLatency').innerText = avg;
 
-            document.getElementById('usageBody').innerHTML = usage.length === 0 
-                ? '<tr><td colspan="3" class="p-12 text-center text-slate-700 italic text-[10px] font-bold tracking-[0.3em] uppercase">Awaiting Traffic</td></tr>'
-                : usage.map(u => `
-                    <tr class="hover:bg-white/[0.02] transition-colors">
-                        <td class="p-6 font-mono text-[10px] text-blue-400 italic">${u.endpoint}</td>
-                        <td class="p-6 text-center"><span class="text-[10px] font-black px-3 py-1 rounded-full ${u.status_code === 200 ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}">${u.status_code}</span></td>
-                        <td class="p-6 text-slate-500 text-right text-[10px] font-bold uppercase tracking-tighter opacity-60">${new Date(u.created_at).toLocaleTimeString()}</td>
-                    </tr>
-                `).join('');
+            const usageBody = document.getElementById('usageBody');
+            if (usage.length === 0) {
+                usageBody.innerHTML = '<tr><td colspan="3" class="p-12 text-center text-slate-700 italic uppercase font-black tracking-[0.4em] text-[9px] opacity-40">Ready to monitor first packet...</td></tr>';
+                return;
+            }
+
+            usageBody.innerHTML = usage.map(u => `
+                <tr class="hover:bg-white/[0.03] transition-colors group">
+                    <td class="p-6 font-mono text-[11px] text-blue-400 group-hover:text-blue-300 transition-colors italic">${u.endpoint}</td>
+                    <td class="p-6 text-center">
+                        <span class="text-[10px] font-black px-3 py-1 rounded-lg ${u.status_code === 200 ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}">
+                            ${u.status_code}
+                        </span>
+                    </td>
+                    <td class="p-6 text-slate-500 text-right text-[10px] font-black uppercase tracking-tighter opacity-60">
+                        <i class="far fa-clock mr-2"></i> ${new Date(u.created_at).toLocaleTimeString()}
+                    </td>
+                </tr>
+            `).join('');
         }
 
+        // --- 4. PLAYGROUND & SANDBOX ---
         async function testRequest() {
             const btn = document.getElementById('btnTest');
             const endpoint = document.getElementById('playgroundEndpoint').value;
@@ -253,57 +399,101 @@
             const statusBadge = document.getElementById('responseStatus');
             const previewDiv = document.getElementById('visualPreview');
 
-            if(!key) return Swal.fire({ icon: 'warning', title: 'Unauthorized', text: 'Paste your API Key first!', background: '#0D1117', color: '#fff', confirmButtonColor: '#ef4444' });
+            if(!key) return Swal.fire({ icon: 'warning', title: 'Unauthorized Session', text: 'You must provide a valid API Key to query the cloud database.', background: '#0D1117', color: '#fff', confirmButtonColor: '#ef4444' });
 
-            btn.disabled = true; btn.innerText = "FETCHING...";
-            resBox.classList.remove('opacity-40');
-            resBox.innerText = "// Querying CineData Cloud...";
+            btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>HANDSHAKING...';
+            resBox.classList.remove('opacity-40', 'italic');
+            resBox.innerText = "// Querying CineData Cloud Repository...";
             previewDiv.classList.add('hidden');
 
             try {
                 const response = await fetch(endpoint, { headers: { 'x-api-key': key }});
                 const data = await response.json();
-                statusBadge.classList.remove('hidden', 'bg-green-500/10', 'text-green-500', 'bg-red-500/10', 'text-red-500');
-                statusBadge.classList.add('block', response.ok ? 'bg-green-500/10' : 'bg-red-500/10', response.ok ? 'text-green-500' : 'text-red-500');
-                statusBadge.innerText = `STATUS: ${response.status}`;
+                
+                statusBadge.classList.remove('hidden', 'bg-green-500/10', 'text-green-500', 'bg-red-500/10', 'text-red-500', 'border-green-500/20', 'border-red-500/20');
+                statusBadge.classList.add('block', response.ok ? 'bg-green-500/10' : 'bg-red-500/10', response.ok ? 'text-green-500' : 'text-red-500', response.ok ? 'border-green-500/20' : 'border-red-500/20');
+                statusBadge.innerText = `HTTP STATUS: ${response.status} ${response.ok ? 'SUCCEEDED' : 'FAILED'}`;
+
                 resBox.innerText = JSON.stringify(data, null, 4);
 
+                // COMPLEX VISUAL PARSING
                 if (response.ok && data.data) {
                     const m = Array.isArray(data.data) ? data.data[0] : data.data;
                     if (m && m.title) {
-                        document.getElementById('prevImg').src = m.cover_url;
+                        document.getElementById('prevImg').src = m.cover_url || 'https://dummyimage.com/200x300/1e293b/ffffff&text=Poster';
                         document.getElementById('prevTitle').innerText = m.title;
                         document.getElementById('prevMeta').innerText = `${m.release_year} • ${m.genres}`;
-                        document.getElementById('prevRating').innerText = `⭐ ${m.rating}`;
+                        document.getElementById('prevRating').innerText = `RATING: ⭐ ${m.rating}`;
                         previewDiv.classList.remove('hidden');
                     }
                 }
                 loadDashboard();
-            } catch (err) { resBox.innerText = `// Connection Error: ${err.message}`; }
-            finally { btn.disabled = false; btn.innerText = "Execute Call 🚀"; }
+            } catch (err) { resBox.innerText = `// System Connectivity Fault: ${err.message}`; }
+            finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> Execute Connection'; }
         }
 
+        // --- 5. ACCOUNT SETTINGS (RESTORED & COMPLEX) ---
+        async function openProfileModal() {
+            try {
+                const res = await fetch('/api/auth/profile', { headers: { 'Authorization': `Bearer ${token}` }});
+                const data = await res.json();
+                document.getElementById('editUsername').value = data.username;
+                document.getElementById('editEmail').value = data.email;
+                document.getElementById('profileModal').classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            } catch (err) { console.error(err); }
+        }
+
+        function closeProfileModal() { document.getElementById('profileModal').classList.add('hidden'); document.body.style.overflow = 'auto'; }
+
+        document.getElementById('profileForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const data = { username: document.getElementById('editUsername').value, email: document.getElementById('editEmail').value };
+            try {
+                const res = await fetch('/api/auth/profile', { method: 'PUT', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+                if (res.ok) {
+                    Swal.fire({ icon: 'success', title: 'Identity Synced', background: '#0D1117', color: '#fff', timer: 1500, showConfirmButton: false });
+                    document.getElementById('userDisplayName').innerText = data.username;
+                    const u = JSON.parse(localStorage.getItem('user')); u.username = data.username; localStorage.setItem('user', JSON.stringify(u));
+                    closeProfileModal();
+                }
+            } catch (err) { console.error(err); }
+        };
+
+        // --- 6. UTILITIES ---
         function setEndpoint(path) { document.getElementById('playgroundEndpoint').value = path; }
+        
         function showExample(code) {
             document.querySelectorAll('.status-tab').forEach(t => t.classList.remove('active-tab'));
             document.getElementById(`tab-${code}`).classList.add('active-tab');
             document.getElementById('exampleCode').innerText = JSON.stringify(examples[code], null, 4);
         }
+
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text);
             document.getElementById('playgroundKey').value = text;
-            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Key Ready!', showConfirmButton: false, timer: 1500, background: '#161B22', color: '#fff' });
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Access Key Locked & Loaded', showConfirmButton: false, timer: 1800, background: '#161B22', color: '#fff' });
         }
+
         async function generateNewKey() {
-            const { value: name } = await Swal.fire({ title: 'Assign Project Name', input: 'text', background: '#0D1117', color: '#fff', confirmButtonColor: '#ef4444' });
-            if (name) { await fetch('/api/keys/generate', { method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ name })}); loadDashboard(); }
+            const { value: name } = await Swal.fire({ title: 'Assign Project Label', input: 'text', background: '#0D1117', color: '#fff', confirmButtonColor: '#ef4444', inputPlaceholder: 'e.g. Production Mobile App' });
+            if (name) {
+                await fetch('/api/keys/generate', { method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ name })});
+                loadDashboard();
+            }
         }
+
         function logout() {
-            Swal.fire({ title: 'Logout?', background: '#0D1117', color: '#fff', showCancelButton: true, confirmButtonColor: '#ef4444' }).then(res => {
+            Swal.fire({ title: 'Terminate Session?', text: 'You will need to re-authenticate to access the hub.', icon: 'warning', background: '#0D1117', color: '#fff', showCancelButton: true, confirmButtonColor: '#ef4444' }).then(res => {
                 if(res.isConfirmed) { localStorage.clear(); window.location.href = '/login'; }
             });
         }
-        window.onload = () => { loadDashboard(); showExample(200); };
+
+        // Initialize v1.0
+        window.onload = () => { 
+            loadDashboard(); 
+            showExample(200); 
+        };
     </script>
 </body>
 </html>

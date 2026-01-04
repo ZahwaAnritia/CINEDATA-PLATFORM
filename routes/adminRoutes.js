@@ -17,4 +17,6 @@ router.put('/movies/:id', adminController.updateMovie);
 router.delete('/movies/:id', adminController.deleteMovie);
 router.get('/movies/:id', adminController.getMovieById);
 
+router.get('/users', auth, adminAuth, adminController.getAllUsers);
+router.get('/global-logs', auth, adminAuth, adminController.getGlobalLogs);
 module.exports = router; // <--- JANGAN LUPA EXPORT
