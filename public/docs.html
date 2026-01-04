@@ -3,129 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Documentation | CineData API</title>
+    <title>API Documentation | CineData</title>
+    <!-- Scripts -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
-        pre { background: #161B22; padding: 1rem; border-radius: 0.75rem; overflow-x: auto; border: 1px solid #30363d; }
-        code { font-family: 'Fira Code', monospace; font-size: 0.9em; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #050810; color: #e2e8f0; }
+        .font-mono { font-family: 'Fira Code', monospace; }
+        .sidebar-link.active { 
+            background: rgba(239, 68, 68, 0.1); 
+            color: #ef4444; 
+            border-right: 3px solid #ef4444; 
+        }
+        pre { background: #0D1117; border: 1px solid rgba(255,255,255,0.05); }
+        code { color: #f87171; }
+        
+        /* Animasi Transisi Halus */
+        .content-section { display: none; }
+        .content-section.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="bg-[#050810] text-slate-300">
+<body class="min-h-screen flex">
 
-    <div class="flex">
-        <!-- Sidebar Navigation -->
-        <aside class="w-64 h-screen sticky top-0 bg-[#0D1117] border-r border-slate-800 p-8 hidden md:block">
-            <div class="text-xl font-black text-white mb-10">CINE<span class="text-red-500">DATA</span></div>
-            <nav class="space-y-6 text-sm font-semibold uppercase tracking-wider">
-                <div class="text-slate-500 text-xs">Introduction</div>
-                <a href="#getting-started" class="block hover:text-white transition">Getting Started</a>
-                <a href="#authentication" class="block hover:text-white transition">Authentication</a>
-                <div class="text-slate-500 text-xs pt-4">Endpoints</div>
-                <a href="#get-movies" class="block hover:text-white transition text-red-500">GET Movies</a>
-                <div class="text-slate-500 text-xs pt-4">Support</div>
-                <a href="#errors" class="block hover:text-white transition">Error Codes</a>
-                <a href="/" class="block text-slate-500 hover:text-white pt-10">← Back to Home</a>
-            </nav>
-        </aside>
+    <!-- SIDEBAR FIXED -->
+    <aside class="w-72 h-screen sticky top-0 bg-[#0D1117] border-r border-white/5 flex flex-col shadow-2xl z-20">
+        <div class="p-8 pb-10">
+            <div class="text-2xl font-black italic tracking-tighter text-white uppercase">CINE<span class="text-red-500">DATA</span></div>
+            <p class="text-[9px] text-slate-500 font-bold tracking-[0.3em] mt-2 uppercase">Official Documentation</p>
+        </div>
 
-        <!-- Main Content -->
-        <main class="flex-1 max-w-4xl px-8 md:px-16 py-12">
+        <nav class="flex-1 px-4 space-y-1">
+            <div class="px-4 py-3 text-[10px] font-black text-slate-600 uppercase tracking-widest">Introduction</div>
+            <button onclick="showSection('getting-started')" id="btn-getting-started" class="sidebar-link w-full flex items-center space-x-3 p-3 rounded-lg text-sm font-bold transition-all text-slate-400 hover:text-white active">
+                <i class="fas fa-flag w-5 text-center"></i>
+                <span>Getting Started</span>
+            </button>
+            <button onclick="showSection('authentication')" id="btn-authentication" class="sidebar-link w-full flex items-center space-x-3 p-3 rounded-lg text-sm font-bold transition-all text-slate-400 hover:text-white">
+                <i class="fas fa-lock w-5 text-center"></i>
+                <span>Authentication</span>
+            </button>
+
+            <div class="px-4 py-3 pt-6 text-[10px] font-black text-slate-600 uppercase tracking-widest">Endpoints</div>
+            <button onclick="showSection('get-movies')" id="btn-get-movies" class="sidebar-link w-full flex items-center space-x-3 p-3 rounded-lg text-sm font-bold transition-all text-slate-400 hover:text-white">
+                <i class="fas fa-film w-5 text-center"></i>
+                <span>GET All Movies</span>
+            </button>
+            <button onclick="showSection('get-movie-id')" id="btn-get-movie-id" class="sidebar-link w-full flex items-center space-x-3 p-3 rounded-lg text-sm font-bold transition-all text-slate-400 hover:text-white">
+                <i class="fas fa-search w-5 text-center"></i>
+                <span>GET Movie by ID</span>
+            </button>
+
+            <div class="px-4 py-3 pt-6 text-[10px] font-black text-slate-600 uppercase tracking-widest">Support</div>
+            <button onclick="showSection('error-codes')" id="btn-error-codes" class="sidebar-link w-full flex items-center space-x-3 p-3 rounded-lg text-sm font-bold transition-all text-slate-400 hover:text-white">
+                <i class="fas fa-exclamation-triangle w-5 text-center"></i>
+                <span>Error Codes</span>
+            </button>
+        </nav>
+
+        <div class="p-6 border-t border-white/5">
+            <a href="/" class="flex items-center justify-center space-x-2 p-3 bg-white/5 rounded-xl text-xs font-bold hover:bg-white/10 transition">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Site</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-1 p-16 max-w-5xl overflow-y-auto">
+
+        <!-- SECTION: GETTING STARTED -->
+        <section id="getting-started" class="content-section active">
+            <h1 class="text-5xl font-black text-white tracking-tighter mb-6 italic">Getting Started</h1>
+            <p class="text-slate-400 leading-relaxed text-lg mb-8">
+                Selamat datang di CineData API. Kami menyediakan akses ke metadata film dark thriller dan drama Korea paling komprehensif. Gunakan instruksi di bawah untuk memulai integrasi aplikasi Anda.
+            </p>
+            <div class="bg-red-500/5 border border-red-500/10 p-6 rounded-3xl">
+                <h4 class="text-red-500 font-black text-xs uppercase tracking-widest mb-2">Base Cloud URL</h4>
+                <code class="text-xl font-mono text-white">http://localhost:3000/api/v1</code>
+            </div>
+        </section>
+
+        <!-- SECTION: AUTHENTICATION -->
+        <section id="authentication" class="content-section">
+            <h1 class="text-5xl font-black text-white tracking-tighter mb-6 italic">Authentication</h1>
+            <p class="text-slate-400 leading-relaxed mb-8">
+                Seluruh permintaan ke CineData API wajib menyertakan kunci akses unik (API Key). Anda dapat mengelola kunci Anda melalui <a href="/dashboard" class="text-red-500 font-bold underline">Developer Dashboard</a>.
+            </p>
+            <div class="space-y-4">
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">Required Header</p>
+                <div class="bg-[#0D1117] p-6 rounded-2xl border border-white/5 font-mono text-sm">
+                    <span class="text-slate-500">x-api-key:</span> <span class="text-red-400">wf_da8e16a54349...</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: GET MOVIES -->
+        <section id="get-movies" class="content-section">
+            <div class="flex items-center space-x-3 mb-6">
+                <span class="bg-green-500 text-black text-[10px] font-black px-3 py-1 rounded-md uppercase">Get</span>
+                <h1 class="text-5xl font-black text-white tracking-tighter italic">/movies</h1>
+            </div>
+            <p class="text-slate-400 mb-8">Mengambil daftar seluruh katalog film, series, dan drakor dalam database publik kami.</p>
             
-            <!-- Getting Started -->
-            <section id="getting-started" class="mb-20">
-                <h1 class="text-4xl font-extrabold text-white mb-6">Documentation</h1>
-                <p class="text-lg leading-relaxed mb-6">Selamat datang di CineData API. Platform ini menyediakan akses data film publik melalui REST API. Dokumentasi ini membantu kamu untuk mengintegrasikan data film ke dalam aplikasi kamu dengan cepat.</p>
-                <div class="bg-red-500/10 border border-red-500/20 p-4 rounded-xl text-red-400 text-sm">
-                    <strong>Base URL:</strong> <code>http://localhost:3000/api/v1</code>
-                </div>
-            </section>
+            <h4 class="text-xs font-black text-slate-600 uppercase tracking-widest mb-4">Request Example</h4>
+            <div class="rounded-3xl overflow-hidden mb-8">
+                <pre class="p-8 text-sm leading-relaxed"><span class="text-purple-400">fetch</span>(<span class="text-green-400">'/api/v1/movies'</span>, {
+  headers: { <span class="text-green-400">'x-api-key'</span>: <span class="text-orange-400">'YOUR_KEY'</span> }
+})</pre>
+            </div>
+        </section>
 
-            <!-- Authentication -->
-            <section id="authentication" class="mb-20 border-t border-slate-800 pt-12">
-                <h2 class="text-2xl font-bold text-white mb-4">Authentication</h2>
-                <p class="mb-6">API ini menggunakan <strong>API Key</strong> untuk mengautentikasi setiap request. Kamu bisa mendapatkan key kamu di <a href="/dashboard" class="text-red-500 hover:underline">Dashboard Developer</a>.</p>
-                <p class="mb-4">Kirimkan key kamu melalui header <code>x-api-key</code>:</p>
-                <pre><code class="text-blue-300">x-api-key: YOUR_API_KEY_HERE</code></pre>
-            </section>
-
-            <!-- GET Movies -->
-            <section id="get-movies" class="mb-20 border-t border-slate-800 pt-12">
-                <div class="flex items-center space-x-3 mb-4">
-                    <span class="bg-green-500/20 text-green-500 px-3 py-1 rounded-md text-sm font-bold">GET</span>
-                    <h2 class="text-2xl font-bold text-white">/movies</h2>
-                </div>
-                <p class="mb-6">Mengambil daftar semua film yang tersedia di database CineData.</p>
-                
-                <h4 class="font-bold text-white mb-2">Example Request (JavaScript)</h4>
-                <pre><code class="text-slate-300">
-fetch('http://localhost:3000/api/v1/movies', {
-  headers: {
-    'x-api-key': 'wf_da8e16...'
-  }
-})
-.then(res => res.json())
-.then(data => console.log(data));
-                </code></pre>
-
-                <h4 class="font-bold text-white mt-8 mb-2">Example Success Response</h4>
-                <pre><code class="text-green-400">
+        <!-- SECTION: GET MOVIE BY ID -->
+        <section id="get-movie-id" class="content-section">
+            <div class="flex items-center space-x-3 mb-6">
+                <span class="bg-green-500 text-black text-[10px] font-black px-3 py-1 rounded-md uppercase">Get</span>
+                <h1 class="text-5xl font-black text-white tracking-tighter italic">/movies/:id</h1>
+            </div>
+            <p class="text-slate-400 mb-8">Mengambil metadata detail spesifik (Termasuk Cast & Synopsis) berdasarkan ID film.</p>
+            
+            <div class="bg-[#0D1117] p-8 rounded-3xl border border-white/5">
+                <h4 class="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">Success Response</h4>
+                <pre class="bg-transparent border-none p-0 text-blue-300 text-xs">
 {
   "status": "success",
-  "results": 1,
-  "data": [
-    {
-      "id": 1,
-      "title": "Inception",
-      "release_year": 2010,
-      "genres": "Action,Sci-Fi",
-      "rating": "8.8",
-      "director": "Christopher Nolan"
-    }
-  ]
-}
-                </code></pre>
-            </section>
+  "data": {
+    "id": 1,
+    "title": "A Shop for Killers",
+    "rating": "8.1"
+  }
+}</pre>
+            </div>
+        </section>
 
-            <!-- Error Codes -->
-            <section id="errors" class="mb-20 border-t border-slate-800 pt-12">
-                <h2 class="text-2xl font-bold text-white mb-6">Error Codes</h2>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead class="border-b border-slate-800 text-slate-500">
-                            <tr>
-                                <th class="py-3 px-2 font-bold">Code</th>
-                                <th class="py-3 px-2 font-bold">Description</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-800">
-                            <tr>
-                                <td class="py-4 px-2 text-white font-mono">401</td>
-                                <td class="py-4 px-2">API Key missing (Header x-api-key tidak ditemukan).</td>
-                            </tr>
-                            <tr>
-                                <td class="py-4 px-2 text-white font-mono">403</td>
-                                <td class="py-4 px-2">Invalid API Key (Key salah atau tidak aktif).</td>
-                            </tr>
-                            <tr>
-                                <td class="py-4 px-2 text-white font-mono">429</td>
-                                <td class="py-4 px-2">Too Many Requests (Kamu melewati batas rate limit).</td>
-                            </tr>
-                            <tr>
-                                <td class="py-4 px-2 text-white font-mono">404</td>
-                                <td class="py-4 px-2">Endpoint not found.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
+        <!-- SECTION: ERROR CODES -->
+        <section id="error-codes" class="content-section">
+            <h1 class="text-5xl font-black text-white tracking-tighter mb-6 italic">Error Codes</h1>
+            <div class="overflow-hidden rounded-3xl border border-white/5">
+                <table class="w-full text-left">
+                    <thead class="bg-white/5 text-[10px] font-black uppercase text-slate-500 tracking-widest">
+                        <tr><th class="p-6">Code</th><th class="p-6">Meaning</th><th class="p-6">Fix</th></tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5 text-sm">
+                        <tr><td class="p-6 font-mono text-red-500">401</td><td class="p-6">Unauthorized</td><td class="p-6 text-slate-500 italic">Cek x-api-key di header</td></tr>
+                        <tr><td class="p-6 font-mono text-red-500">404</td><td class="p-6">Not Found</td><td class="p-6 text-slate-500 italic">Endpoint atau ID salah</td></tr>
+                        <tr><td class="p-6 font-mono text-red-500">429</td><td class="p-6">Rate Limited</td><td class="p-6 text-slate-500 italic">Tunggu 1 menit sebelum hit lagi</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-            <footer class="text-slate-600 text-sm mt-20">
-                &copy; 2026 CineData API Docs.
-            </footer>
-        </main>
-    </div>
+    </main>
 
+    <script>
+        // FUNGSI UTAMA PINDAH TAB (Sembunyikan yang lain, munculkan satu)
+        function showSection(id) {
+            // 1. Sembunyikan semua section
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(s => s.classList.remove('active'));
+
+            // 2. Munculkan section yang dipilih
+            document.getElementById(id).classList.add('active');
+
+            // 3. Update styling sidebar link
+            const links = document.querySelectorAll('.sidebar-link');
+            links.forEach(l => l.classList.remove('active'));
+            document.getElementById('btn-' + id).classList.add('active');
+
+            // 4. Scroll main content area ke paling atas secara instan
+            document.querySelector('main').scrollTop = 0;
+        }
+    </script>
 </body>
 </html>
