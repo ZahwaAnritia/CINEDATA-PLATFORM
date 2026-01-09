@@ -4,21 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
-    <title>Admin Hub | CineData Infrastructure</title>
+    <title>Admin Hub | CineData Management</title>
     
-    <!-- Frameworks -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #050810; color: #e2e8f0; }
+        :root {
+            --primary-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            --dark-gradient: linear-gradient(135deg, #0D1117 0%, #050810 100%);
+        }
+        /* UPDATED BODY FONT SIZE TO 13px */
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: var(--dark-gradient); 
+            color: #e2e8f0; 
+            font-size: 13px; /* Samakan dengan Dev Dashboard */
+        }
+        
+        /* ADDED FIRA CODE FOR LOGS */
+        .font-mono { font-family: 'Fira Code', monospace; }
+
         .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
         .sidebar-item { transition: all 0.3s ease; border-left: 4px solid transparent; cursor: pointer; }
+        .sidebar-item:hover { background: rgba(239, 68, 68, 0.05); color: white; border-left: 4px solid #ef4444; }
         .sidebar-item.active { background: rgba(239, 68, 68, 0.1); color: #ef4444; border-left: 4px solid #ef4444; }
+        
         .custom-scrollbar::-webkit-scrollbar { width: 5px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #ef4444; border-radius: 10px; }
+        
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -28,7 +44,6 @@
 <body class="min-h-screen selection:bg-red-500/30">
 
     <div class="flex">
-        <!-- SIDEBAR -->
         <aside class="w-72 h-screen glass-card sticky top-0 flex flex-col z-20 shadow-2xl">
             <div class="p-8">
                 <div class="text-3xl font-black text-red-500 tracking-tighter uppercase italic">CINE<span class="text-white">DATA</span></div>
@@ -36,107 +51,99 @@
             </div>
             
             <nav class="flex-1 px-4 space-y-2">
-                <div onclick="showSection('movies')" id="nav-movies" class="sidebar-item active w-full flex items-center space-x-4 p-4 rounded-2xl text-xs font-black uppercase tracking-widest">
-                    <i class="fas fa-database w-5 text-center"></i> <span>Catalog Hub</span>
+                <div onclick="showSection('movies')" id="nav-movies" class="sidebar-item active w-full flex items-center space-x-4 p-4 rounded-2xl text-xs font-bold uppercase tracking-widest">
+                    <i class="fas fa-database w-5"></i> <span>Catalog Hub</span>
                 </div>
-                <div onclick="showSection('users')" id="nav-users" class="sidebar-item w-full flex items-center space-x-4 p-4 rounded-2xl text-xs font-black uppercase tracking-widest text-slate-500 hover:text-white transition-all">
-                    <i class="fas fa-users-gear w-5 text-center"></i> <span>Dev Management</span>
+                <div onclick="showSection('users')" id="nav-users" class="sidebar-item w-full flex items-center space-x-4 p-4 rounded-2xl text-xs font-black uppercase tracking-widest text-slate-500 hover:text-white">
+                    <i class="fas fa-users-gear w-5"></i> <span>Dev Management</span>
                 </div>
-                <div onclick="showSection('logs')" id="nav-logs" class="sidebar-item w-full flex items-center space-x-4 p-4 rounded-2xl text-xs font-black uppercase tracking-widest text-slate-500 hover:text-white transition-all">
-                    <i class="fas fa-tower-observation w-5 text-center"></i> <span>Global Logs</span>
+                <div onclick="showSection('logs')" id="nav-logs" class="sidebar-item w-full flex items-center space-x-4 p-4 rounded-2xl text-xs font-black uppercase tracking-widest text-slate-500 hover:text-white">
+                    <i class="fas fa-tower-observation w-5"></i> <span>Global Logs</span>
                 </div>
                 <div class="pt-8 pb-4 px-4 text-[9px] font-black text-slate-600 uppercase tracking-[0.3em]">External</div>
                 <a href="/" target="_blank" class="flex items-center space-x-4 p-4 hover:bg-white/5 rounded-2xl transition text-slate-500 group">
-                    <i class="fas fa-external-link-alt w-5 text-center group-hover:text-blue-400"></i> <span>View Site</span>
+                    <i class="fas fa-external-link-alt w-5 group-hover:text-blue-400"></i> <span>View Site</span>
                 </a>
             </nav>
 
             <div class="p-6 border-t border-white/5">
                 <button onclick="logout()" class="flex items-center justify-center space-x-3 p-4 text-red-400 hover:bg-red-500/10 w-full rounded-2xl transition font-black uppercase text-[10px] tracking-widest border border-red-500/20">
-                    <i class="fas fa-power-off"></i> <span>Terminate Session</span>
+                    <i class="fas fa-power-off"></i> <span>Sign Out</span>
                 </button>
             </div>
         </aside>
 
-        <!-- MAIN HUB -->
         <main class="flex-1 p-10 max-w-[1600px] mx-auto overflow-y-auto h-screen custom-scrollbar">
             <header class="flex justify-between items-end mb-10">
                 <div>
                     <h1 class="text-4xl font-black text-white tracking-tighter uppercase" id="pageTitle">System Overview</h1>
                     <p class="text-slate-500 mt-2 italic flex items-center">
                         <span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
-                        Admin Node 01 • <span id="lastUpdated" class="ml-1 text-slate-400">Syncing...</span>
+                        Admin Node 01 • Last Sync: <span id="lastUpdated" class="ml-1 text-slate-400">Loading...</span>
                     </p>
                 </div>
-                <button onclick="openModal()" id="btnAddMovie" class="bg-red-600 px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-red-700 transition shadow-xl shadow-red-600/20">
+                <button onclick="openModal()" id="btnAddMovie" class="bg-red-600 px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-red-700 transition shadow-xl shadow-red-600/20 hover:scale-105 active:scale-95">
                     <i class="fas fa-plus mr-2"></i> Register New Movie
                 </button>
             </header>
 
-            <!-- 4 Advanced Stats -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-                <div class="glass-card p-8 rounded-[2.5rem] border-t-2 border-t-red-500 shadow-2xl">
-                    <p class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2">Movies</p>
-                    <h2 id="totalMovies" class="text-5xl font-black text-white">0</h2>
-                </div>
-                <div class="glass-card p-8 rounded-[2.5rem] border-t-2 border-t-blue-500 shadow-2xl">
-                    <p class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2">Devs</p>
-                    <h2 id="totalUsers" class="text-5xl font-black text-blue-500">0</h2>
-                </div>
-                <div class="glass-card p-8 rounded-[2.5rem] border-t-2 border-t-green-500 shadow-2xl">
-                    <p class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2">Global Hits</p>
-                    <h2 id="totalHits" class="text-5xl font-black text-green-500">0</h2>
-                </div>
-                <div class="glass-card p-8 rounded-[2.5rem] border-t-2 border-t-yellow-500 text-center">
-                    <p class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2 italic">Avg Score</p>
-                    <h2 id="avgRating" class="text-4xl font-black text-yellow-500 uppercase italic">0.0</h2>
-                </div>
+                <div class="glass-card p-6 rounded-[2.5rem] border-t-2 border-t-red-500"><p class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2">Movies</p><h2 id="totalMovies" class="text-4xl font-black text-white">0</h2></div>
+                <div class="glass-card p-6 rounded-[2.5rem] border-t-2 border-t-blue-500"><p class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2">Devs</p><h2 id="totalUsers" class="text-4xl font-black text-blue-500">0</h2></div>
+                <div class="glass-card p-6 rounded-[2.5rem] border-t-2 border-t-green-500"><p class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2">Global Hits</p><h2 id="totalHits" class="text-4xl font-black text-green-500">0</h2></div>
+                <div class="glass-card p-6 rounded-[2.5rem] border-t-2 border-t-yellow-500 text-center"><p class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2 italic">Avg Score</p><h2 id="avgRating" class="text-3xl font-black text-yellow-500 uppercase italic">0.0</h2></div>
             </div>
 
-            <!-- TAB 1: MOVIES -->
             <section id="section-movies" class="tab-content active">
                 <div class="glass-card rounded-[3rem] overflow-hidden shadow-2xl">
-                    <div class="p-8 border-b border-white/5 flex justify-between bg-white/[0.01]">
-                        <h3 class="font-black uppercase tracking-widest text-sm italic">Movie Metadata Library</h3>
-                        <div class="relative">
-                            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-600"></i>
-                            <input type="text" id="searchInput" placeholder="Filter metadata..." class="bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2 text-xs focus:border-red-500 outline-none w-80">
+                    <div class="p-8 border-b border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 bg-white/[0.01]">
+                        <h3 class="font-black uppercase tracking-widest text-sm italic">Master Catalog Hub</h3>
+                        <div class="flex space-x-3 w-full md:w-auto">
+                            <select id="genreFilter" onchange="filterMovies()" class="bg-[#161B22] border border-white/10 rounded-xl px-4 py-2 text-xs focus:border-red-500 outline-none text-slate-400 font-bold uppercase">
+                                <option value="">All Genres</option>
+                                <option value="Action">Action</option>
+                                <option value="Comedy">Comedy</option>
+                                <option value="Drama">Drama</option>
+                                <option value="Romance">Romance</option>
+                                <option value="Animation">Animation</option>
+                                <option value="Horror">Horror</option>
+                            </select>
+                            <div class="relative flex-1 md:w-64">
+                                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-600"></i>
+                                <input type="text" id="searchInput" oninput="filterMovies()" placeholder="Search title..." class="bg-[#161B22] border border-white/10 rounded-xl pl-10 pr-4 py-2 text-xs focus:border-red-500 outline-none w-full">
+                            </div>
                         </div>
                     </div>
-                    <table class="w-full text-left">
-                        <thead class="bg-black/40 text-slate-500 text-[10px] font-black uppercase tracking-widest">
-                            <tr><th class="p-8">Visual</th><th class="p-8">Identification</th><th class="p-8 text-center">Score</th><th class="p-8 text-right">Actions</th></tr>
-                        </thead>
-                        <tbody id="movieTable" class="divide-y divide-white/5 italic"></tbody>
-                    </table>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-black/40 text-slate-500 text-[10px] font-black uppercase tracking-widest">
+                                <tr><th class="p-8">Visual</th><th class="p-8">Identification</th><th class="p-8 text-center">Score</th><th class="p-8 text-right">Actions</th></tr>
+                            </thead>
+                            <tbody id="movieTable" class="divide-y divide-white/5 italic"></tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
 
-            <!-- TAB 2: USERS -->
             <section id="section-users" class="tab-content">
                 <div class="glass-card rounded-[3rem] overflow-hidden shadow-2xl">
-                    <div class="p-10 border-b border-white/5">
-                        <h3 class="font-black uppercase tracking-widest text-sm text-blue-400">Developer Ecosystem</h3>
-                    </div>
+                    <div class="p-10 border-b border-white/5"><h3 class="font-black uppercase tracking-widest text-sm text-blue-400 italic">Developer Ecosystem</h3></div>
                     <table class="w-full text-left">
                         <thead class="bg-black/40 text-slate-500 text-[10px] font-black uppercase tracking-widest">
-                            <tr><th class="p-8">Developer Name</th><th class="p-8">Network Email</th><th class="p-8 text-right">Joined Date</th></tr>
+                            <tr><th class="p-8 text-left">Developer Name</th><th class="p-8">Email</th><th class="p-8 text-right">Joined</th></tr>
                         </thead>
                         <tbody id="userTable" class="divide-y divide-white/5"></tbody>
                     </table>
                 </div>
             </section>
 
-            <!-- TAB 3: TRAFFIC LOGS -->
             <section id="section-logs" class="tab-content">
                 <div class="glass-card rounded-[3rem] overflow-hidden shadow-2xl">
-                    <div class="p-10 border-b border-white/5">
-                        <h3 class="font-black uppercase tracking-widest text-sm text-green-500">Live Traffic Monitoring</h3>
-                    </div>
-                    <div class="overflow-x-auto h-[600px] custom-scrollbar">
+                    <div class="p-10 border-b border-white/5"><h3 class="font-black uppercase tracking-widest text-sm text-green-500 italic">Traffic Monitoring</h3></div>
+                    <div class="overflow-x-auto h-[500px] custom-scrollbar">
                         <table class="w-full text-left">
-                            <thead class="bg-black/60 text-slate-600 text-[9px] font-black uppercase tracking-widest sticky top-0 backdrop-blur-md">
-                                <tr><th class="p-6">User</th><th class="p-6">Endpoint</th><th class="p-6 text-center">Latency</th><th class="p-6 text-center">Status</th><th class="p-6 text-right">Timestamp</th></tr>
+                            <thead class="bg-black/60 text-slate-600 text-[9px] font-black uppercase tracking-widest sticky top-0">
+                                <tr><th class="p-6">User</th><th class="p-6">Endpoint</th><th class="p-6 text-center">Status</th><th class="p-6 text-right">Time</th></tr>
                             </thead>
                             <tbody id="logTable" class="divide-y divide-white/5 text-[11px] font-mono"></tbody>
                         </table>
@@ -146,80 +153,45 @@
         </main>
     </div>
 
-    <!-- Modal Form (Bisa Add / Edit) -->
     <div id="movieModal" class="fixed inset-0 bg-black/95 backdrop-blur-md hidden z-50 flex items-center justify-center p-4">
         <div class="bg-[#0D1117] border border-white/10 w-full max-w-2xl rounded-[3rem] p-12 overflow-y-auto max-h-[90vh] custom-scrollbar shadow-2xl">
-            <h3 id="modalTitle" class="text-3xl font-black text-white uppercase italic tracking-tighter mb-10">Register New Movie</h3>
+            <h3 id="modalTitle" class="text-3xl font-black text-white uppercase italic tracking-tighter mb-8">Register Movie</h3>
             <form id="movieForm" class="grid grid-cols-2 gap-6 text-left">
                 <input type="hidden" id="movieId">
                 <div class="col-span-2">
-                    <label class="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest">Movie Title</label>
-                    <input type="text" id="title" required class="w-full bg-[#161B22] border border-white/5 rounded-2xl px-6 py-4 focus:border-red-500 outline-none text-white">
+                    <label class="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest leading-none">Movie Title</label>
+                    <input type="text" id="title" required class="w-full bg-[#161B22] border border-white/5 rounded-2xl px-6 py-4 outline-none text-white">
                 </div>
-                <div>
-                    <label class="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest">Year</label>
-                    <input type="number" id="release_year" required class="w-full bg-[#161B22] border border-white/5 rounded-2xl px-6 py-4 focus:border-red-500 outline-none text-white">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest">Rating</label>
-                    <input type="number" id="rating" step="0.1" min="0" max="10" required class="w-full bg-[#161B22] border border-white/5 rounded-2xl px-6 py-4 focus:border-red-500 outline-none text-white">
-                </div>
-                <div class="col-span-2">
-                    <label class="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest">Genres</label>
-                    <input type="text" id="genres" required class="w-full bg-[#161B22] border border-white/5 rounded-2xl px-6 py-4 text-white">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest">Director</label>
-                    <input type="text" id="director" class="w-full bg-[#161B22] border border-white/5 rounded-2xl px-6 py-4 text-white">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest">Duration (Min)</label>
-                    <input type="number" id="duration_minutes" class="w-full bg-[#161B22] border border-white/5 rounded-2xl px-6 py-4 text-white">
-                </div>
-                <div class="col-span-2">
-                    <label class="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest">Cast</label>
-                    <input type="text" id="cast" class="w-full bg-[#161B22] border border-white/5 rounded-2xl px-6 py-4 text-white">
-                </div>
-                <div class="col-span-2">
-                    <label class="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest">Description</label>
-                    <textarea id="description" rows="3" class="w-full bg-[#161B22] border border-white/5 rounded-2xl px-6 py-4 text-white italic"></textarea>
-                </div>
-                <div class="col-span-2">
-                    <label class="block text-[10px] font-black text-red-500 mb-2 uppercase tracking-widest font-bold">Poster URL</label>
-                    <input type="url" id="cover_url" required class="w-full bg-[#161B22] border border-red-900/30 rounded-2xl px-6 py-4 text-xs text-red-200">
-                </div>
-                <div class="col-span-2 flex space-x-4 mt-6">
+                <div><label class="block text-[10px] font-black text-slate-500 mb-2 uppercase leading-none">Year</label>
+                <input type="number" id="release_year" required class="w-full bg-[#161B22] border border-white/5 rounded-2xl px-6 py-4 outline-none text-white"></div>
+                <div><label class="block text-[10px] font-black text-slate-500 mb-2 uppercase leading-none">Rating</label>
+                <input type="number" step="0.1" id="rating" required class="w-full bg-[#161B22] border border-white/5 rounded-2xl px-6 py-4 outline-none text-white"></div>
+                <div class="col-span-2"><label class="block text-[10px] font-black text-slate-500 mb-2 uppercase leading-none">Genres</label>
+                <input type="text" id="genres" required class="w-full bg-[#161B22] border border-white/5 rounded-2xl px-6 py-4 text-white"></div>
+                <div class="col-span-2"><label class="block text-[10px] font-black text-slate-500 mb-2 uppercase leading-none">Description</label>
+                <textarea id="description" rows="3" class="w-full bg-[#161B22] border border-white/5 rounded-2xl px-6 py-4 text-white italic outline-none"></textarea></div>
+                <div class="col-span-2"><label class="block text-[10px] font-black text-red-500 mb-2 uppercase leading-none font-bold">Poster URL</label>
+                <input type="url" id="cover_url" required class="w-full bg-[#161B22] border border-red-900/30 rounded-2xl px-6 py-4 text-xs text-red-200"></div>
+                <div class="col-span-2 flex space-x-4 mt-4">
                     <button type="button" onclick="closeModal()" class="flex-1 py-5 border border-white/10 rounded-2xl font-bold uppercase text-[10px]">Cancel</button>
-                    <button type="submit" class="flex-1 py-5 bg-red-600 rounded-2xl font-black uppercase text-[10px] shadow-xl">Save Data</button>
+                    <button type="submit" class="flex-1 py-5 bg-red-600 rounded-2xl font-black uppercase text-[10px]">Save Metadata</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal: Detail View -->
     <div id="previewModal" class="fixed inset-0 bg-black/95 backdrop-blur-md hidden z-[100] flex items-center justify-center p-4">
         <div class="absolute inset-0 cursor-zoom-out" onclick="closePreview()"></div>
-        <div class="relative bg-[#0D1117] border border-white/5 w-full max-w-4xl rounded-[3.5rem] shadow-2xl overflow-hidden flex flex-col md:flex-row z-10">
-            <div class="md:w-1/3 bg-black flex items-center justify-center p-2">
-                <img id="detailCover" src="" class="w-full h-full object-cover rounded-[2.5rem] border border-white/5">
-            </div>
+        <div class="relative bg-[#0D1117] border border-white/5 w-full max-w-4xl rounded-[3.5rem] shadow-2xl overflow-hidden flex flex-col md:flex-row z-10 animate-in zoom-in duration-300">
+            <div class="md:w-1/3 bg-black flex items-center justify-center p-2"><img id="detailCover" src="" class="w-full h-full object-cover rounded-[2.5rem] shadow-2xl border border-white/5"></div>
             <div class="md:w-2/3 p-12 flex flex-col justify-center text-left">
                 <div class="flex justify-between items-start mb-8">
-                    <div>
-                        <h2 id="detailTitle" class="text-4xl font-black text-white leading-tight uppercase italic tracking-tighter"></h2>
-                        <p id="detailYearGenre" class="text-red-500 font-bold text-[10px] uppercase tracking-[0.3em] mt-3"></p>
-                    </div>
-                    <div class="bg-yellow-500/10 border border-yellow-500/20 px-5 py-3 rounded-3xl text-yellow-500 font-black text-2xl tracking-tighter italic">
-                        <span id="detailRating"></span>
-                    </div>
+                    <div><h2 id="detailTitle" class="text-4xl font-black text-white italic tracking-tighter leading-tight"></h2><p id="detailYearGenre" class="text-red-500 font-bold text-[10px] uppercase tracking-[0.3em] mt-3"></p></div>
+                    <div class="bg-yellow-500/10 border border-yellow-500/20 px-5 py-3 rounded-3xl text-yellow-500"><span id="detailRating" class="font-black text-2xl italic tracking-tighter">⭐ 0.0</span></div>
                 </div>
                 <div class="space-y-6">
-                    <h4 class="text-[9px] font-black text-slate-600 uppercase tracking-widest">Synopsis</h4>
+                    <h4 class="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1 leading-none">Synopsis</h4>
                     <p id="detailDescription" class="text-slate-300 leading-relaxed text-sm italic"></p>
-                    <div class="grid grid-cols-2 gap-10 border-y border-white/5 py-6">
-                        <div><h4 class="text-[8px] text-slate-600 uppercase font-black mb-1">Director</h4><p id="detailDirector" class="text-white text-xs font-bold"></p></div>
-                        <div><h4 class="text-[8px] text-slate-600 uppercase font-black mb-1">Runtime</h4><p id="detailDuration" class="text-white text-xs font-bold"></p></div>
-                    </div>
                     <button onclick="closePreview()" class="mt-10 w-full py-4 border border-white/5 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-white hover:text-black transition-all">Close Details</button>
                 </div>
             </div>
@@ -231,42 +203,31 @@
         const user = JSON.parse(localStorage.getItem('user') || '{}');
         let allMovies = [];
 
-        if (!token || user.role !== 'admin') {
-            localStorage.clear(); window.location.href = '/admin-login';
-        }
+        if (!token || user.role !== 'admin') { localStorage.clear(); window.location.href = '/admin-login'; }
 
-        // --- 1. TAB NAVIGATION ---
         function showSection(id) {
             document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.sidebar-item').forEach(n => n.classList.remove('active'));
             document.getElementById('section-' + id).classList.add('active');
             document.getElementById('nav-' + id).classList.add('active');
-            const titles = { movies: 'System Overview', users: 'Developer Hub', logs: 'Infrastructure Audit' };
+            const titles = { movies: 'Catalog Hub', users: 'Developer Hub', logs: 'Infrastructure Audit' };
             document.getElementById('pageTitle').innerText = titles[id];
             document.getElementById('btnAddMovie').style.display = (id === 'movies') ? 'block' : 'none';
             if(id === 'users') fetchUsers();
             if(id === 'logs') fetchGlobalLogs();
         }
 
-        // --- 2. DATA INITIALIZER ---
         async function loadData() {
             try {
                 const h = { 'Authorization': `Bearer ${token}` };
-                const [resStats, resMovies] = await Promise.all([
-                    fetch('/api/admin/stats', { headers: h }),
-                    fetch('/api/admin/movies', { headers: h })
-                ]);
+                const [resStats, resMovies] = await Promise.all([fetch('/api/admin/stats', { headers: h }), fetch('/api/admin/movies', { headers: h })]);
                 const stats = await resStats.json();
                 allMovies = await resMovies.json();
-
                 document.getElementById('totalMovies').innerText = stats.total_movies;
                 document.getElementById('totalUsers').innerText = stats.total_users || 0;
                 document.getElementById('totalHits').innerText = stats.total_api_hits;
-                
-                const avg = allMovies.length > 0 ? (allMovies.reduce((a, b) => a + parseFloat(b.rating || 0), 0) / allMovies.length).toFixed(1) : '0.0';
-                document.getElementById('avgRating').innerText = avg;
+                document.getElementById('avgRating').innerText = allMovies.length ? (allMovies.reduce((a, b) => a + parseFloat(b.rating || 0), 0) / allMovies.length).toFixed(1) : '0.0';
                 document.getElementById('lastUpdated').innerText = new Date().toLocaleTimeString();
-
                 renderMovieTable(allMovies);
             } catch (err) { console.error(err); }
         }
@@ -274,102 +235,54 @@
         function renderMovieTable(data) {
             document.getElementById('movieTable').innerHTML = data.map((m, index) => `
                 <tr class="hover:bg-white/[0.02] transition-colors group">
-                    <td class="p-8">
-                        <div class="relative group w-14 h-20 cursor-zoom-in" onclick="showMovieDetail(${index})">
-                            <img src="${m.cover_url}" class="w-full h-full object-cover rounded-xl border border-white/5 shadow-2xl group-hover:border-red-500 transition-all" onerror="this.src='https://dummyimage.com/100x150/161b22/ffffff&text=Error';">
-                        </div>
-                    </td>
-                    <td class="p-8 text-left">
-                        <div class="font-black text-white text-lg leading-tight uppercase italic tracking-tighter">${m.title}</div>
-                        <div class="text-slate-500 text-[9px] mt-1 uppercase tracking-widest font-bold">${m.release_year} • ${m.genres}</div>
-                    </td>
-                    <td class="p-8 text-center font-black text-yellow-500 tracking-tighter italic">⭐ ${m.rating}</td>
-                    <td class="p-8 text-right space-x-6 text-[10px] font-black uppercase tracking-widest">
-                        <button onclick="editMovie(${m.id})" class="text-blue-400 hover:text-white transition">Edit</button>
-                        <button onclick="deleteMovie(${m.id})" class="text-red-500 hover:text-white transition">Delete</button>
-                    </td>
-                </tr>
-            `).join('');
+                    <td class="p-8"><div class="relative group w-14 h-20 cursor-zoom-in" onclick="showMovieDetail(${index})"><img src="${m.cover_url}" class="w-full h-full object-cover rounded-xl border border-white/5 shadow-2xl group-hover:border-red-500 transition-all" onerror="this.src='https://dummyimage.com/100x150/161b22/ffffff&text=Error';"></div></td>
+                    <td class="p-8 text-left"><div class="font-black text-white text-lg italic tracking-tighter uppercase leading-tight">${m.title}</div><div class="text-slate-500 text-[9px] mt-1 uppercase tracking-widest font-bold">${m.release_year} • ${m.genres}</div></td>
+                    <td class="p-8 text-center font-black text-yellow-500 italic tracking-tighter">⭐ ${m.rating}</td>
+                    <td class="p-8 text-right space-x-6 text-[10px] font-black uppercase tracking-widest"><button onclick="editMovie(${m.id})" class="text-blue-400 hover:text-white transition">Edit</button><button onclick="deleteMovie(${m.id})" class="text-red-500 hover:text-white transition">Delete</button></td>
+                </tr>`).join('');
+        }
+
+        function filterMovies() {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            const genre = document.getElementById('genreFilter').value.toLowerCase();
+            const filtered = allMovies.filter(m => m.title.toLowerCase().includes(term) && (genre === "" || m.genres.toLowerCase().includes(genre)));
+            renderMovieTable(filtered);
         }
 
         async function fetchUsers() {
             const res = await fetch('/api/admin/users', { headers: { 'Authorization': `Bearer ${token}` }});
             const users = await res.json();
-            document.getElementById('userTable').innerHTML = users.map(u => `
-                <tr class="hover:bg-white/[0.02]">
-                    <td class="p-8 font-black text-white uppercase italic tracking-tighter">${u.username}</td>
-                    <td class="p-8 text-slate-400 text-sm font-bold">${u.email}</td>
-                    <td class="p-8 text-right text-slate-600 text-[10px] font-black">${new Date(u.created_at).toLocaleDateString()}</td>
-                </tr>
-            `).join('');
+            document.getElementById('userTable').innerHTML = users.map(u => `<tr class="hover:bg-white/[0.02]"><td class="p-8 font-black uppercase italic">${u.username}</td><td class="p-8 text-slate-400 text-sm font-bold">${u.email}</td><td class="p-8 text-right text-slate-600 text-[10px] font-black">${new Date(u.created_at).toLocaleDateString()}</td></tr>`).join('');
         }
 
         async function fetchGlobalLogs() {
             const res = await fetch('/api/admin/global-logs', { headers: { 'Authorization': `Bearer ${token}` }});
             const logs = await res.json();
-            document.getElementById('logTable').innerHTML = logs.map(l => `
-                <tr class="hover:bg-white/[0.02]">
-                    <td class="p-6 text-blue-400 font-black tracking-tighter uppercase">${l.username}</td>
-                    <td class="p-6 text-slate-300 italic"><span class="text-slate-600 mr-2 uppercase">${l.method}</span>${l.endpoint}</td>
-                    <td class="p-6 text-center text-green-500 font-bold">${l.response_time_ms}ms</td>
-                    <td class="p-6 text-center"><span class="px-2 py-0.5 rounded ${l.status_code === 200 ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}">${l.status_code}</span></td>
-                    <td class="p-6 text-right text-slate-600 font-black">${new Date(l.created_at).toLocaleTimeString()}</td>
-                </tr>
-            `).join('');
+            document.getElementById('logTable').innerHTML = logs.map(l => `<tr class="hover:bg-white/[0.02]"><td class="p-6 text-red-500 font-black tracking-tighter uppercase italic">${l.username}</td><td class="p-6 text-slate-300 italic"><span class="text-slate-600 mr-2 uppercase">${l.method}</span>${l.endpoint}</td><td class="p-6 text-center"><span class="px-2 py-0.5 rounded ${l.status_code === 200 ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}">${l.status_code}</span></td><td class="p-6 text-right text-slate-600 font-black uppercase text-[10px]">${new Date(l.created_at).toLocaleTimeString()}</td></tr>`).join('');
         }
 
-        // --- 3. MOVIE MANAGEMENT ---
         document.getElementById('movieForm').onsubmit = async (e) => {
             e.preventDefault();
             const id = document.getElementById('movieId').value;
-            const data = {
-                title: document.getElementById('title').value,
-                release_year: parseInt(document.getElementById('release_year').value),
-                rating: parseFloat(document.getElementById('rating').value),
-                genres: document.getElementById('genres').value || "",
-                director: document.getElementById('director').value || "",
-                duration_minutes: parseInt(document.getElementById('duration_minutes').value) || 0,
-                cast: document.getElementById('cast').value || "",
-                description: document.getElementById('description').value || "",
-                cover_url: document.getElementById('cover_url').value || ""
-            };
+            const data = { title: document.getElementById('title').value, release_year: parseInt(document.getElementById('release_year').value), rating: parseFloat(document.getElementById('rating').value), genres: document.getElementById('genres').value, description: document.getElementById('description').value, cover_url: document.getElementById('cover_url').value };
             const method = id ? 'PUT' : 'POST';
             const url = id ? `/api/admin/movies/${id}` : '/api/admin/movies';
             const res = await fetch(url, { method, headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-            if(res.ok) {
-                Swal.fire({ icon: 'success', title: 'DATABASE SYNCED', text: 'Metadata updated successfully.', background: '#0D1117', color: '#fff', timer: 2000, showConfirmButton: false });
-                closeModal(); loadData();
-            }
+            if(res.ok) { Swal.fire({ icon: 'success', title: 'DATABASE SYNCED', background: '#0D1117', color: '#fff', timer: 1500, showConfirmButton: false }); closeModal(); loadData(); }
         };
 
         async function editMovie(id) {
-            try {
-                const res = await fetch(`/api/admin/movies/${id}`, { headers: { 'Authorization': `Bearer ${token}` }});
-                const m = await res.json();
-                document.getElementById('movieId').value = m.id;
-                document.getElementById('title').value = m.title;
-                document.getElementById('release_year').value = m.release_year;
-                document.getElementById('rating').value = m.rating;
-                document.getElementById('genres').value = m.genres;
-                document.getElementById('director').value = m.director;
-                document.getElementById('duration_minutes').value = m.duration_minutes;
-                document.getElementById('cast').value = m.cast;
-                document.getElementById('description').value = m.description;
-                document.getElementById('cover_url').value = m.cover_url;
-                document.getElementById('modalTitle').innerText = "Update Metadata";
-                openModal();
-            } catch (err) { console.error(err); }
+            const res = await fetch(`/api/admin/movies/${id}`, { headers: { 'Authorization': `Bearer ${token}` }});
+            const m = await res.json();
+            document.getElementById('movieId').value = m.id; document.getElementById('title').value = m.title; document.getElementById('release_year').value = m.release_year; document.getElementById('rating').value = m.rating; document.getElementById('genres').value = m.genres; document.getElementById('description').value = m.description; document.getElementById('cover_url').value = m.cover_url;
+            document.getElementById('modalTitle').innerText = "Update Metadata"; openModal();
         }
 
         async function deleteMovie(id) {
-            const confirm = await Swal.fire({ title: 'Purge Entity?', text: 'Permanently erase metadata?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', background: '#0D1117', color: '#fff' });
-            if(confirm.isConfirmed) {
-                await fetch(`/api/admin/movies/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` }});
-                loadData();
-            }
+            const resConfirm = await Swal.fire({ title: 'Purge Entry?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', background: '#0D1117', color: '#fff' });
+            if(resConfirm.isConfirmed) { await fetch(`/api/admin/movies/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` }}); loadData(); }
         }
 
-        // --- 4. UI UTILS ---
         function showMovieDetail(index) {
             const m = allMovies[index];
             document.getElementById('detailCover').src = m.cover_url;
@@ -377,18 +290,15 @@
             document.getElementById('detailYearGenre').innerText = `${m.release_year} • ${m.genres}`;
             document.getElementById('detailRating').innerText = `⭐ ${m.rating}`;
             document.getElementById('detailDescription').innerText = m.description || "No synopsis.";
-            document.getElementById('detailDirector').innerText = m.director || "Unknown";
-            document.getElementById('detailDuration').innerText = `${m.duration_minutes || 0} Min`;
             document.getElementById('previewModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
+
         function openModal() { document.getElementById('movieModal').classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
         function closeModal() { document.getElementById('movieModal').classList.add('hidden'); document.getElementById('movieForm').reset(); document.getElementById('movieId').value = ""; document.getElementById('modalTitle').innerText = "Register New Movie"; document.body.style.overflow = 'auto'; }
         function closePreview() { document.getElementById('previewModal').classList.add('hidden'); document.body.style.overflow = 'auto'; }
         function logout() {
-            Swal.fire({ title: 'TERMINATE ADMIN SESSION?', text: "Closing secure connections...", icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', background: '#0D1117', color: '#fff' }).then(res => {
-                if (res.isConfirmed) { localStorage.clear(); window.location.href = '/admin-login'; }
-            });
+            Swal.fire({ title: 'TERMINATE ADMIN SESSION?', text: "Closing secure connections...", background: '#0D1117', color: '#fff', showCancelButton: true, confirmButtonColor: '#ef4444' }).then(res => { if (res.isConfirmed) { localStorage.clear(); window.location.href = '/admin-login'; } });
         }
         window.onload = loadData;
     </script>
