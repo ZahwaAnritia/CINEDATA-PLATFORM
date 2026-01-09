@@ -1,9 +1,17 @@
 const db = require('../config/db');
 
+// controllers/publicController.js
+
 exports.getAllMovies = async (req, res) => {
     try {
-        const [rows] = await db.execute('SELECT * FROM movies');
-        res.json({ status: "success", results: rows.length, data: rows });
+        // Ambil semua data tanpa peduli scope kunci
+        const [rows] = await db.execute('SELECT * FROM movies ORDER BY id DESC');
+        
+        res.json({ 
+            status: "success", 
+            results: rows.length,
+            data: rows 
+        });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
