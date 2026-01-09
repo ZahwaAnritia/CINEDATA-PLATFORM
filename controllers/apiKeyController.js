@@ -10,14 +10,19 @@ exports.getKeys = async (req, res) => {
     }
 };
 
+// controllers/apiKeyController.js
+
 exports.generateKey = async (req, res) => {
+    const { name } = req.body; // Cuma ambil Nama Project
+    const crypto = require('crypto');
     const newKey = 'wf_' + crypto.randomBytes(24).toString('hex');
+    
     try {
         await db.execute(
             'INSERT INTO api_keys (user_id, api_key, key_name) VALUES (?, ?, ?)',
-            [req.user.id, newKey, req.body.name || 'Default Key']
+            [req.user.id, newKey, name || 'My Application']
         );
-        res.json({ message: "Key generated!", api_key: newKey });
+        res.json({ message: "API Key generated successfully!", api_key: newKey });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
