@@ -10,11 +10,6 @@ untuk aplikasi pihak ketiga, dengan sistem autentikasi berbasis JWT dan API Key.
 - Public Movie API
 - Logging & Rate Limiting
 
-## Tech Stack
-Node.js · Express · MySQL · Tailwind CSS
-
-
-
 ## Screenshots
 
 ### Landing Page
