@@ -1,22 +1,24 @@
 const express = require('express');
-const router = express.Router(); // <--- BARIS INI WAJIB ADA
+const router = express.Router();
 const adminController = require('../controllers/adminController');
 const auth = require('../middleware/auth');
 const adminAuth = require('../middleware/adminAuth');
 
-// Middleware untuk proteksi Admin
+// --- PROTEKSI GLOBAL ---
+// Semua route di bawah ini otomatis butuh login & role admin
 router.use(auth);
 router.use(adminAuth);
 
-// Pastikan controller sudah di-import di atas
+// --- ENDPOINTS STATISTIK & LOG ---
 router.get('/stats', adminController.getAdminStats);
-router.get('/movies', adminController.getAllMovies);
-router.get('/movies/:id', adminController.getMovieById);
-router.post('/movies', adminController.addMovie);
-router.put('/movies/:id', adminController.updateMovie);
-router.delete('/movies/:id', adminController.deleteMovie);
-router.get('/movies/:id', adminController.getMovieById);
+router.get('/users', adminController.getAllUsers);
+router.get('/global-logs', adminController.getGlobalLogs);
 
-router.get('/users', auth, adminAuth, adminController.getAllUsers);
-router.get('/global-logs', auth, adminAuth, adminController.getGlobalLogs);
-module.exports = router; // <--- JANGAN LUPA EXPORT
+// --- ENDPOINTS MANAJEMEN FILM (CRUD) ---
+router.get('/movies', adminController.getAllMovies);         // List semua
+router.get('/movies/:id', adminController.getMovieById);     // Detail (UNTUK EDIT)
+router.post('/movies', adminController.addMovie);            // Tambah
+router.put('/movies/:id', adminController.updateMovie);      // Update/Simpan Edit
+router.delete('/movies/:id', adminController.deleteMovie);   // Hapus
+
+module.exports = router;
