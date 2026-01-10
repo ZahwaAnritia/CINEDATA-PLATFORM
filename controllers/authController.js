@@ -31,12 +31,23 @@ exports.login = async (req, res) => {
             process.env.JWT_SECRET,
             { expiresIn: '24h' }
         );
-        res.json({ token, user: { id: user.id, username: user.username, role: user.role } });
+
+        // --- PERBAIKAN DISINI ---
+        res.json({ 
+            token, 
+            user: { 
+                id: user.id, 
+                username: user.username, 
+                email: user.email, // <--- TAMBAHKAN INI!
+                role: user.role 
+            } 
+        });
+        // ------------------------
+
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 };
-
 // controllers/authController.js
 
 // 1. Ambil Data Profil
