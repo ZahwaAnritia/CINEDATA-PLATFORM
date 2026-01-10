@@ -13,12 +13,12 @@ untuk aplikasi pihak ketiga, dengan sistem autentikasi berbasis JWT dan API Key.
 ## Screenshots
 
 ### Landing Page
-![Landing Page](./sscinedata/home1.png)
-![Landing Page](./sscinedata/home2.png)
-![Landing Page](./sscinedata/doc.png)
-![Landing Page](./sscinedata/doc2.png)
-![Landing Page](./sscinedata/doc3.png)
-![Landing Page](./sscinedata/doc4.png)
+# ![Landing Page](./sscinedata/home1.png)
+# ![Landing Page](./sscinedata/home2.png)
+# ![Landing Page](./sscinedata/doc.png)
+# ![Landing Page](./sscinedata/doc2.png)
+# ![Landing Page](./sscinedata/doc3.png)
+# ![Landing Page](./sscinedata/doc4.png)
 
 ### Admin Hub (Management)
 # ![Admin Hub](./sscinedata/loginadmin.png)
