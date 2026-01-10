@@ -725,7 +725,27 @@
         function generateNewKey() { Swal.fire({ title: 'Generate New Key?', text: "This will create a new production key.", icon: 'question', showCancelButton: true, background: '#0D1117', color: '#fff', confirmButtonColor: '#ef4444' }).then(async (result) => { if (result.isConfirmed) { await fetch('/api/keys', { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } }); loadDashboard(); } }); }
         function copyToClipboard(t) { navigator.clipboard.writeText(t); Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Copied', showConfirmButton: false, timer: 1500, background: '#161B22', color: '#fff' }); }
         function showExample(c) { document.querySelectorAll('.status-tab').forEach(t=>{t.classList.remove('active-tab-btn','bg-white/5','text-white'); t.classList.add('text-slate-500');}); const active = document.getElementById(`tab-${c}`); active.classList.add('active-tab-btn','bg-white/5','text-white'); active.classList.remove('text-slate-500'); document.getElementById('exampleCode').innerHTML = syntaxHighlight(examples[c]); }
-        function logout() { Swal.fire({ title: 'Disconnect?', background: '#0D1117', color: '#fff', showCancelButton: true, confirmButtonColor: '#ef4444' }).then(res => { if(res.isConfirmed) { localStorage.clear(); window.location.href = '/login'; } }); }
+function logout() {
+    Swal.fire({ 
+        title: 'Disconnect?', 
+        text: "End secure session?",
+        // ... styling lain kamu ...
+        background: '#0D1117', 
+        color: '#fff', 
+        showCancelButton: true, 
+        confirmButtonColor: '#ef4444',
+        
+        // --- TAMBAHKAN BARIS INI (SOLUSINYA) ---
+        heightAuto: false 
+        // ---------------------------------------
+        
+    }).then(res => { 
+        if (res.isConfirmed) { 
+            localStorage.clear(); 
+            window.location.href = '/login'; 
+        } 
+    });
+}
         
         function closeProfileModal() { document.getElementById('profileModal').classList.add('hidden'); }
        // --- UPDATE FUNGSI INI DI JAVASCRIPT KAMU ---
