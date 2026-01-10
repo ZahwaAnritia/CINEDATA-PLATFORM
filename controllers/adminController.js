@@ -1,8 +1,6 @@
 const db = require('../config/db');
 
-// 1. Ambil Statistik Global untuk Dashboard Admin
-// controllers/adminController.js
-
+// 1. Ambil Statistik Global
 exports.getAdminStats = async (req, res) => {
     try {
         const [movies] = await db.execute('SELECT COUNT(*) as count FROM movies');
@@ -11,7 +9,7 @@ exports.getAdminStats = async (req, res) => {
         
         res.json({ 
             total_movies: movies[0].count, 
-            total_users: users[0].count, // Tambahkan ini
+            total_users: users[0].count, 
             total_api_hits: usage[0].count 
         });
     } catch (err) {
@@ -19,17 +17,17 @@ exports.getAdminStats = async (req, res) => {
     }
 };
 
-// 2. Ambil Semua Film (Untuk tabel Admin)
+// 2. Ambil Semua Film
 exports.getAllMovies = async (req, res) => {
     try {
-        const [rows] = await db.execute('SELECT * FROM movies ORDER BY created_at DESC');
+        const [rows] = await db.execute('SELECT * FROM movies ORDER BY id DESC');
         res.json(rows);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 };
 
-// 3. Ambil Satu Film Berdasarkan ID (Untuk Modal Edit)
+// 3. Ambil Satu Film Berdasarkan ID
 exports.getMovieById = async (req, res) => {
     try {
         const [rows] = await db.execute('SELECT * FROM movies WHERE id = ?', [req.params.id]);
@@ -40,14 +38,22 @@ exports.getMovieById = async (req, res) => {
     }
 };
 
-// 4. Tambah Film Baru
+// 4. Tambah Film Baru (Safe Version)
 exports.addMovie = async (req, res) => {
     const { title, release_year, genres, description, director, cast, rating, duration_minutes, cover_url } = req.body;
+    
+    // Proteksi undefined dengan || null agar MySQL tidak error
+    const params = [
+        title || null, release_year || null, genres || null, 
+        description || null, director || null, cast || null, 
+        rating || null, duration_minutes || null, cover_url || null
+    ];
+
     try {
         await db.execute(
             `INSERT INTO movies (title, release_year, genres, description, director, cast, rating, duration_minutes, cover_url) 
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [title, release_year, genres, description, director, cast, rating, duration_minutes, cover_url]
+            params
         );
         res.status(201).json({ message: "Movie added successfully!" });
     } catch (err) {
@@ -55,75 +61,16 @@ exports.addMovie = async (req, res) => {
     }
 };
 
-
-// 6. Hapus Film
-exports.deleteMovie = async (req, res) => {
-    const { id } = req.params;
-    try {
-        const [result] = await db.execute('DELETE FROM movies WHERE id = ?', [id]);
-        
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ error: "Movie not found" });
-        }
-
-        res.json({ message: "Movie deleted successfully!" });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-};
-
-exports.getMovieById = async (req, res) => {
-    try {
-        const [rows] = await db.execute('SELECT * FROM movies WHERE id = ?', [req.params.id]);
-        if (rows.length === 0) return res.status(404).json({ error: "Movie not found" });
-        res.json(rows[0]); // Harus mengembalikan object movie tunggal
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-};
-
-// controllers/adminController.js
-
-// TAMBAH FILM
-exports.addMovie = async (req, res) => {
-    // Gunakan || null untuk semua field agar tidak undefined
-    const title = req.body.title || null;
-    const release_year = req.body.release_year || null;
-    const genres = req.body.genres || null;
-    const description = req.body.description || null;
-    const director = req.body.director || null;
-    const cast = req.body.cast || null;
-    const rating = req.body.rating || null;
-    const duration_minutes = req.body.duration_minutes || null;
-    const cover_url = req.body.cover_url || null;
-
-    try {
-        await db.execute(
-            `INSERT INTO movies (title, release_year, genres, description, director, cast, rating, duration_minutes, cover_url) 
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [title, release_year, genres, description, director, cast, rating, duration_minutes, cover_url]
-        );
-        res.status(201).json({ message: "Movie added successfully!" });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: err.message });
-    }
-};
-
-// UPDATE FILM
+// 5. Update Film (Safe Version)
 exports.updateMovie = async (req, res) => {
     const { id } = req.params;
-    
-    // Pastikan semua variabel ini ada atau NULL, jangan biarkan undefined
-    const title = req.body.title || null;
-    const release_year = req.body.release_year || null;
-    const genres = req.body.genres || null;
-    const description = req.body.description || null;
-    const director = req.body.director || null;
-    const cast = req.body.cast || null;
-    const rating = req.body.rating || null;
-    const duration_minutes = req.body.duration_minutes || null;
-    const cover_url = req.body.cover_url || null;
+    const { title, release_year, genres, description, director, cast, rating, duration_minutes, cover_url } = req.body;
+
+    const params = [
+        title || null, release_year || null, genres || null, 
+        description || null, director || null, cast || null, 
+        rating || null, duration_minutes || null, cover_url || null, id
+    ];
 
     try {
         const [result] = await db.execute(
@@ -131,23 +78,27 @@ exports.updateMovie = async (req, res) => {
                 title = ?, release_year = ?, genres = ?, description = ?, 
                 director = ?, cast = ?, rating = ?, duration_minutes = ?, cover_url = ? 
              WHERE id = ?`,
-            [title, release_year, genres, description, director, cast, rating, duration_minutes, cover_url, id]
+            params
         );
-
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ error: "Movie not found" });
-        }
-
+        if (result.affectedRows === 0) return res.status(404).json({ error: "Movie not found" });
         res.json({ message: "Movie updated successfully!" });
     } catch (err) {
-        console.error(err);
         res.status(500).json({ error: err.message });
     }
 };
 
-// controllers/adminController.js
+// 6. Hapus Film
+exports.deleteMovie = async (req, res) => {
+    try {
+        const [result] = await db.execute('DELETE FROM movies WHERE id = ?', [req.params.id]);
+        if (result.affectedRows === 0) return res.status(404).json({ error: "Movie not found" });
+        res.json({ message: "Movie deleted successfully!" });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
 
-// 1. Ambil semua User (Developer)
+// 7. Ambil Semua Developer
 exports.getAllUsers = async (req, res) => {
     try {
         const [rows] = await db.execute('SELECT id, username, email, created_at FROM users WHERE role = "developer"');
@@ -155,7 +106,7 @@ exports.getAllUsers = async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 };
 
-// 2. Ambil Log Trafik Global (Seluruh Sistem)
+// 8. Ambil Log Trafik Global
 exports.getGlobalLogs = async (req, res) => {
     try {
         const [rows] = await db.execute(`
