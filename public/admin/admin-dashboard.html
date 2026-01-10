@@ -116,9 +116,12 @@
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left">
-                            <thead class="bg-black/40 text-slate-500 text-[10px] font-black uppercase tracking-widest">
-                                <tr><th class="p-8">Visual</th><th class="p-8">Identification</th><th class="p-8 text-center">Score</th><th class="p-8 text-right">Actions</th></tr>
-                            </thead>
+                            <thead class="border-b border-white/10 text-slate-400 text-[10px] font-bold uppercase tracking-widest">
+    <tr>
+        <th class="p-8 text-left w-1/3">Developer Name</th>
+        <th class="p-8 text-left w-1/3">Email</th> <th class="p-8 text-right">Joined</th>
+    </tr>
+</thead>
                             <tbody id="movieTable" class="divide-y divide-white/5 italic"></tbody>
                         </table>
                     </div>
@@ -180,23 +183,59 @@
         </div>
     </div>
 
-    <div id="previewModal" class="fixed inset-0 bg-black/95 backdrop-blur-md hidden z-[100] flex items-center justify-center p-4">
-        <div class="absolute inset-0 cursor-zoom-out" onclick="closePreview()"></div>
-        <div class="relative bg-[#0D1117] border border-white/5 w-full max-w-4xl rounded-[3.5rem] shadow-2xl overflow-hidden flex flex-col md:flex-row z-10 animate-in zoom-in duration-300">
-            <div class="md:w-1/3 bg-black flex items-center justify-center p-2"><img id="detailCover" src="" class="w-full h-full object-cover rounded-[2.5rem] shadow-2xl border border-white/5"></div>
-            <div class="md:w-2/3 p-12 flex flex-col justify-center text-left">
-                <div class="flex justify-between items-start mb-8">
-                    <div><h2 id="detailTitle" class="text-4xl font-black text-white italic tracking-tighter leading-tight"></h2><p id="detailYearGenre" class="text-red-500 font-bold text-[10px] uppercase tracking-[0.3em] mt-3"></p></div>
-                    <div class="bg-yellow-500/10 border border-yellow-500/20 px-5 py-3 rounded-3xl text-yellow-500"><span id="detailRating" class="font-black text-2xl italic tracking-tighter">⭐ 0.0</span></div>
+    <!-- Modal Detail: Versi Compact & Ramping (FIXED IDs) -->
+<div id="previewModal" class="fixed inset-0 bg-black/95 backdrop-blur-md hidden z-[100] flex items-center justify-center p-6">
+    <!-- Area Klik Luar untuk Tutup -->
+    <div class="absolute inset-0 cursor-zoom-out" onclick="closePreview()"></div>
+    
+    <div class="relative bg-[#0D1117] border border-white/10 w-full max-w-3xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col md:flex-row z-10 animate-fade">
+        
+        <!-- Kolom Poster Ramping -->
+        <div class="md:w-64 bg-black flex items-center justify-center p-2 relative flex-shrink-0">
+            <img id="detailCover" src="" class="w-full h-auto aspect-[2/3] object-cover rounded-[1.8rem] shadow-2xl">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
+        </div>
+
+        <!-- Kolom Info Padat -->
+        <div class="flex-1 p-10 text-left flex flex-col justify-center">
+            <div class="flex justify-between items-start mb-6">
+                <div class="min-w-0">
+                    <h2 id="detailTitle" class="text-3xl font-black text-white italic tracking-tighter leading-tight uppercase">Movie Title</h2><p id="detailYearGenre" class="text-red-500 font-bold text-[9px] uppercase tracking-[0.3em] mt-2 italic leading-none"></p>
                 </div>
-                <div class="space-y-6">
-                    <h4 class="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1 leading-none">Synopsis</h4>
-                    <p id="detailDescription" class="text-slate-300 leading-relaxed text-sm italic"></p>
-                    <button onclick="closePreview()" class="mt-10 w-full py-4 border border-white/5 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-white hover:text-black transition-all">Close Details</button>
+                <!-- Badge Rating -->
+                <div class="bg-yellow-500/10 border border-yellow-500/20 px-4 py-3 rounded-2xl text-yellow-500 text-center leading-none ml-4 flex-shrink-0">
+                    <p class="text-[8px] font-bold uppercase mb-1 opacity-60">Score</p>
+                    <span id="detailRating" class="font-black text-xl tracking-tighter italic text-yellow-500">⭐ 0.0</span>
                 </div>
+            </div>
+
+            <div class="space-y-6">
+                <div>
+                    <h4 class="text-[8px] font-black text-slate-600 uppercase tracking-widest leading-none mb-2 italic">Synopsis Overview</h4>
+                    <p id="detailDescription" class="text-slate-300 leading-relaxed text-[12px] italic font-medium"></p>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-6 border-y border-white/5 py-6 italic uppercase tracking-widest text-[8px] font-black">
+                    <div>
+                        <p class="text-slate-600 mb-1">Director</p>
+                        <p id="detailDirector" class="text-white text-[11px] font-bold truncate"></p>
+                    </div>
+                    <div>
+                        <p class="text-slate-600 mb-1">Total Runtime</p>
+                        <p id="detailDuration" class="text-white text-[11px] font-bold"></p>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-[8px] font-black text-slate-600 uppercase tracking-widest leading-none mb-2 italic">Starring Cast</h4>
+                    <p id="detailCast" class="text-slate-400 text-[10px] italic font-medium leading-relaxed"></p>
+                </div>
+
+                <button onclick="closePreview()" class="mt-4 w-full py-4 bg-white/5 border border-white/10 text-white rounded-2xl font-black text-[9px] uppercase tracking-widest hover:bg-red-600 hover:border-red-500 transition-all shadow-lg active:scale-95">Dismiss Viewer</button>
             </div>
         </div>
     </div>
+</div>
 
     <script>
         const token = localStorage.getItem('token');
@@ -249,11 +288,12 @@
             renderMovieTable(filtered);
         }
 
-        async function fetchUsers() {
-            const res = await fetch('/api/admin/users', { headers: { 'Authorization': `Bearer ${token}` }});
-            const users = await res.json();
-            document.getElementById('userTable').innerHTML = users.map(u => `<tr class="hover:bg-white/[0.02]"><td class="p-8 font-black uppercase italic">${u.username}</td><td class="p-8 text-slate-400 text-sm font-bold">${u.email}</td><td class="p-8 text-right text-slate-600 text-[10px] font-black">${new Date(u.created_at).toLocaleDateString()}</td></tr>`).join('');
-        }
+async function fetchUsers() {
+    const res = await fetch('/api/admin/users', { headers: { 'Authorization': `Bearer ${token}` }});
+    const users = await res.json();
+    // BAGIAN INI YANG HARUS DIUBAH
+    document.getElementById('userTable').innerHTML = users.map(u => `<tr class="hover:bg-white/[0.02]"><td class="p-8 font-black uppercase italic">${u.username}</td><td class="p-8 text-slate-400 text-sm font-bold">${u.email}</td><td class="p-8 text-right text-slate-600 text-[10px] font-black">${new Date(u.created_at).toLocaleDateString()}</td></tr>`).join('');
+}
 
         async function fetchGlobalLogs() {
             const res = await fetch('/api/admin/global-logs', { headers: { 'Authorization': `Bearer ${token}` }});
@@ -284,15 +324,28 @@
         }
 
         function showMovieDetail(index) {
-            const m = allMovies[index];
-            document.getElementById('detailCover').src = m.cover_url;
-            document.getElementById('detailTitle').innerText = m.title;
-            document.getElementById('detailYearGenre').innerText = `${m.release_year} • ${m.genres}`;
-            document.getElementById('detailRating').innerText = `⭐ ${m.rating}`;
-            document.getElementById('detailDescription').innerText = m.description || "No synopsis.";
-            document.getElementById('previewModal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
+    const m = allMovies[index];
+    
+    // Set Gambar
+    document.getElementById('detailCover').src = m.cover_url || 'https://dummyimage.com/400x600/1e293b/ffffff&text=No+Poster';
+    
+    // Set Teks Dasar
+    document.getElementById('detailTitle').innerText = m.title;
+    document.getElementById('detailYearGenre').innerText = `${m.release_year} • ${m.genres || 'N/A'}`;
+    
+    // Set Rating (Fix format desimal)
+    document.getElementById('detailRating').innerText = `⭐ ${parseFloat(m.rating || 0).toFixed(1)}`;
+    
+    // Set Detail Informasi (Sesuai Gambar 2)
+    document.getElementById('detailDescription').innerText = m.description || "Synopsis not synced from cloud database.";
+    document.getElementById('detailDirector').innerText = m.director || "Unknown Director";
+    document.getElementById('detailDuration').innerText = m.duration_minutes ? `${m.duration_minutes} min` : "N/A";
+    document.getElementById('detailCast').innerText = m.cast || "No cast metadata recorded.";
+
+    // Tampilkan Modal
+    document.getElementById('previewModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; // Kunci scroll layar belakang
+}
 
         function openModal() { document.getElementById('movieModal').classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
         function closeModal() { document.getElementById('movieModal').classList.add('hidden'); document.getElementById('movieForm').reset(); document.getElementById('movieId').value = ""; document.getElementById('modalTitle').innerText = "Register New Movie"; document.body.style.overflow = 'auto'; }
