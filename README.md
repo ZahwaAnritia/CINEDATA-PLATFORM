@@ -1,44 +1,19 @@
-# CineData API - The Open Movie Metadata Hub
+# CineData API
 
-**CineData API** adalah platform Open API (SaaS Grade) yang menyediakan akses metadata film premium dengan spesialisasi pada genre **Dark Action, Thriller, Crime, dan Mystery**. Dibangun menggunakan arsitektur 3-Tier yang modern dan aman.
+CineData API adalah layanan Open API yang menyediakan metadata film
+untuk aplikasi pihak ketiga, dengan sistem autentikasi berbasis JWT dan API Key.
 
-## Fitur Utama
-- **Unified Red Dashboard**: Tema visual konsisten antara Admin dan Developer.
-- **Admin Hub**: Manajemen katalog film (CRUD) lengkap dengan visual poster dan detail view.
-- **Developer Console**: Manajemen multi-API Key, statistik penggunaan, dan analitik latensi.
-- **Interactive Playground**: Uji coba endpoint API secara real-time langsung dari browser.
-- **Telemetry System**: Pencatatan otomatis setiap aktivitas API (Logging) ke database.
-- **Security**: Proteksi JWT untuk dashboard dan x-api-key untuk akses data publik.
+## Fitur
+- Admin & Developer Dashboard
+- Manajemen katalog film (CRUD)
+- API Key Management
+- Public Movie API
+- Logging & Rate Limiting
 
 ## Tech Stack
+Node.js · Express · MySQL · Tailwind CSS
 
-### Backend
-- **Node.js (Runtime v22)**  
-  Runtime JavaScript untuk menjalankan server-side application dengan performa tinggi.
-- **Express.js**  
-  Web framework ringan dan fleksibel untuk membangun RESTful API.
 
-### Database
-- **MySQL 8.0**  
-  Database relasional untuk penyimpanan data pengguna, metadata film, API key, dan telemetry.
-
-### Frontend
-- **HTML5**  
-  Semantic markup untuk struktur halaman yang rapi dan mudah dipelihara.
-- **Tailwind CSS**  
-  Utility-first CSS framework untuk membangun UI yang responsif, modern, dan konsisten.
-- **JavaScript (ES6+)**  
-  Logika client-side, manipulasi DOM, dan komunikasi API menggunakan Fetch API.
-- **SweetAlert2**  
-  Library pop-up dan alert interaktif untuk meningkatkan user experience.
-- **FontAwesome 6**  
-  Library ikon profesional untuk memperkuat visual antarmuka.
-
-### Authentication & Security
-- **JWT (JSON Web Token)**  
-  Digunakan untuk menjaga keamanan sesi login pada dashboard Admin dan Developer.
-- **API Key System**  
-  Mekanisme otorisasi untuk mengontrol akses data publik oleh aplikasi pihak ketiga.
 
 ## Screenshots
 
