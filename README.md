@@ -42,3 +42,6 @@ untuk aplikasi pihak ketiga, dengan sistem autentikasi berbasis JWT dan API Key.
 # ![Dev Console](./sscinedata/livecatalogdev4.png)
 # ![Dev Console](./sscinedata/livecatalogdev5.png)
 # ![Dev Console](./sscinedata/settingdev.png)
+
+## Uji RateLimit
+# ![Dev Console](./sscinedata/ujiratelimit.png)
