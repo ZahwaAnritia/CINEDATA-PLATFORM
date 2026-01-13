@@ -95,70 +95,97 @@
         </div>
     </section>
 
-    <script>
-        // --- 1. LOGIKA SESSION EXPIRATION (Auto Logout 24 Jam) ---
-        function checkSession() {
-    const loginTime = localStorage.getItem('loginTimestamp');
-    const now = new Date().getTime();
-    const expireTime = 24 * 60 * 60 * 1000; // Nama variabel diganti
+<script>
+    // --- 1. LOGIKA SESSION EXPIRATION ---
+    function checkSession() {
+        const loginTime = localStorage.getItem('loginTimestamp');
+        const now = new Date().getTime();
+        const expireTime = 24 * 60 * 60 * 1000;
 
-    if (loginTime && (now - loginTime > expireTime)) {
-        localStorage.clear();
-        return false;
-    }
-    return !!localStorage.getItem('token');
-}
-
-        // --- 2. UPDATE TAMPILAN NAVBAR ---
-        function updateUI() {
-            const isLoggedIn = checkSession();
-            if (isLoggedIn) {
-                const user = JSON.parse(localStorage.getItem('user') || '{}');
-                const target = user.role === 'admin' ? '/admin-panel' : '/dashboard';
-                const label = user.role === 'admin' ? 'Admin Hub' : 'Dev Console';
-                
-                document.getElementById('navActions').innerHTML = `
-                    <a href="/docs" class="text-slate-400 hover:text-white transition">Docs</a>
-                    <a href="${target}" class="bg-white text-black px-6 py-2.5 rounded-full font-black shadow-xl hover:bg-slate-200">
-                        GO TO ${label.toUpperCase()} <i class="fas fa-arrow-right ml-2"></i>
-                    </a>
-                `;
-            }
+        if (loginTime && (now - loginTime > expireTime)) {
+            localStorage.clear();
+            return false;
         }
+        return !!localStorage.getItem('token');
+    }
 
-        // --- 3. FETCH CATALOG (PAKE API KEY KAMU) ---
-        async function fetchShowcase() {
-            try {
-                // PENTING: Paste salah satu API KEY kamu dari database di sini agar gambar muncul
-                const API_KEY = 'wf_da8e16a5434942f3c42f71c96121172f328f5b6e7677de57c9c0a934ffae9b04'; 
+    // --- 2. UPDATE TAMPILAN NAVBAR (FIXED VERSION) ---
+    function updateUI() {
+        const isLoggedIn = checkSession();
+        
+        if (isLoggedIn) {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            // DEBUG LOG - Buka Console (F12) untuk lihat ini
+            console.log('🔍 DEBUG - Current User:', user);
+            console.log('🔍 DEBUG - User Role:', user.role);
+            
+            // PERBAIKAN: Route yang benar sesuai role
+            let target, label;
+            
+            if (user.role === 'admin') {
+                target = '/admin-panel';
+                label = 'Admin Hub';
+                console.log('✅ Detected ADMIN role → Redirect to /admin-panel');
+            } else if (user.role === 'developer') {
+                target = '/dashboard';
+                label = 'Dev Console';
+                console.log('✅ Detected DEVELOPER role → Redirect to /dashboard');
+            } else {
+                // Fallback jika role tidak valid
+                target = '/login';
+                label = 'Sign In';
+                console.log('⚠️ Unknown role, redirect to /login');
+            }
+            
+            // Update navbar button
+            document.getElementById('navActions').innerHTML = `
+                <a href="/docs" class="text-slate-400 hover:text-white transition text-[10px] font-black uppercase tracking-[0.2em]">Docs</a>
+                <a href="${target}" class="bg-white text-black px-6 py-2.5 rounded-full font-black shadow-xl hover:bg-slate-200 text-[10px] uppercase tracking-widest">
+                    GO TO ${label.toUpperCase()} <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            `;
+        }
+    }
 
-                const res = await fetch('/api/v1/movies', { headers: { 'x-api-key': API_KEY } });
-                const result = await res.json();
-                const container = document.getElementById('movieShowcase');
+    // --- 3. FETCH CATALOG ---
+    async function fetchShowcase() {
+        try {
+            const API_KEY = 'wf_9b7b6a653caf0c2b83ec083744258965e24927ad5962f379'; 
 
-                if (result.data) {
-                    container.innerHTML = result.data.slice(0, 10).map(m => `
-                        <div class="movie-card group relative transition-all duration-300">
-                            <div class="aspect-[2/3] overflow-hidden rounded-[2rem] border border-white/5 bg-slate-900 shadow-2xl relative">
-                                <img src="${m.cover_url}" class="w-full h-full object-cover" onerror="this.src='https://dummyimage.com/400x600/161b22/ffffff&text=${m.title.replace(/ /g,'+')}';">
-                                <div class="poster-overlay absolute inset-0 bg-gradient-to-t from-black opacity-0 transition-opacity duration-300 flex flex-col justify-end p-6">
-                                    <span class="text-yellow-500 font-bold text-[10px]">⭐ ${m.rating}</span>
-                                    <h4 class="text-white font-black uppercase italic text-sm tracking-tighter">${m.title}</h4>
-                                </div>
+            const res = await fetch('/api/v1/movies', { 
+                headers: { 'x-api-key': API_KEY } 
+            });
+            
+            const result = await res.json();
+            const container = document.getElementById('movieShowcase');
+
+            if (result.data && result.data.length > 0) {
+                container.innerHTML = result.data.slice(0, 10).map(m => `
+                    <div class="movie-card group relative transition-all duration-300">
+                        <div class="aspect-[2/3] overflow-hidden rounded-[2rem] border border-white/5 bg-slate-900 shadow-2xl relative">
+                            <img src="${m.cover_url}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/400x600/0f172a/ef4444?text=${encodeURIComponent(m.title)}';">
+                            <div class="poster-overlay absolute inset-0 bg-gradient-to-t from-black opacity-0 transition-opacity duration-300 flex flex-col justify-end p-6">
+                                <span class="text-yellow-500 font-bold text-[10px]">⭐ ${m.rating}</span>
+                                <h4 class="text-white font-black uppercase italic text-sm tracking-tighter">${m.title}</h4>
                             </div>
                         </div>
-                    `).join('');
-                }
-            } catch (err) {
-                console.error("Catalog Error:", err);
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = '<p class="col-span-full text-center text-slate-500 italic">No movies available</p>';
             }
+        } catch (err) {
+            console.error("Catalog Error:", err);
+            document.getElementById('movieShowcase').innerHTML = '<p class="col-span-full text-center text-red-500">Failed to load catalog</p>';
         }
+    }
 
-        // Jalankan semua fungsi
-        window.onload = () => {
-            updateUI();
-            fetchShowcase();
-        };
-    </script>
+    // Jalankan semua fungsi saat halaman load
+    window.onload = () => {
+        updateUI();
+        fetchShowcase();
+    };
+</script>
 </body>
 </html>

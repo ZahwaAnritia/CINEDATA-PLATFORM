@@ -530,9 +530,10 @@
                             <p class="text-[8px] font-black text-slate-600 uppercase mb-2 tracking-widest">${k.key_name}</p>
                             <code class="text-[10px] text-red-400 font-mono bg-red-900/10 px-3 py-2 rounded block break-all mb-3">${k.api_key}</code>
                             <div class="flex gap-2">
-                                <button onclick="copyToClipboard('${k.api_key}')" class="flex-1 h-9 bg-white/5 rounded-lg flex items-center justify-center gap-2 text-slate-400 hover:bg-white hover:text-black transition-all shadow-lg text-[10px] font-bold">
-                                    <i class="far fa-copy"></i> Copy
-                                </button>
+                                <button onclick="copyToClipboard('${k.api_key}')" 
+                        class="flex-1 h-9 bg-white/5 rounded-lg flex items-center justify-center gap-2 text-slate-400 hover:bg-white hover:text-black transition-all shadow-lg text-[9px] font-black uppercase tracking-widest border border-white/5">
+                        <i class="far fa-copy text-xs"></i> Copy Key
+                    </button>
                                 <button onclick="deleteApiKey(${k.id})" class="flex-1 h-9 bg-red-500/10 rounded-lg flex items-center justify-center gap-2 text-red-500 hover:bg-red-600 hover:text-white transition-all shadow-lg text-[10px] font-bold border border-red-500/20">
                                     <i class="fas fa-trash-alt"></i> Delete
                                 </button>
@@ -748,11 +749,54 @@
 
         function closeDetail() { document.getElementById('detailModal').classList.add('hidden'); document.body.style.overflow = 'auto'; }
         function changeCatPage(p) { curPage = p; renderCatalog(); document.querySelector('main').scrollTop = 0; }
-        
+         function copyToClipboard(t) { navigator.clipboard.writeText(t); document.getElementById('playgroundKey').value = t; document.getElementById('catalogKeyInput').value = t; Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Identity Captured', showConfirmButton: false, timer: 1500, background: '#161B22', color: '#fff' }); }
         // --- UTILS & PROFILE ---
         function setEndpoint(v) { document.getElementById('playgroundEndpoint').value = v; }
-        function generateNewKey() { Swal.fire({ title: 'Generate New Key?', text: "This will create a new production key.", icon: 'question', showCancelButton: true, background: '#0D1117', color: '#fff', confirmButtonColor: '#ef4444' }).then(async (result) => { if (result.isConfirmed) { await fetch('/api/keys', { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } }); loadDashboard(); } }); }
-        function copyToClipboard(t) { navigator.clipboard.writeText(t); Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Copied', showConfirmButton: false, timer: 1500, background: '#161B22', color: '#fff' }); }
+       async function generateNewKey() {
+    // 1. Minta user masukkan nama project/aplikasi untuk key-nya
+    const { value: name } = await Swal.fire({
+        title: 'GENERATE NEW KEY',
+        input: 'text',
+        inputLabel: 'Apa nama project/aplikasi ini?',
+        inputPlaceholder: 'Contoh: My Mobile App',
+        background: '#0D1117',
+        color: '#fff',
+        confirmButtonColor: '#ef4444',
+        showCancelButton: true,
+        cancelButtonText: 'Batal'
+    });
+
+    // 2. Jika user memasukkan nama dan menekan OK
+    if (name) {
+        try {
+            const res = await fetch('/api/keys/generate', { // <-- PASTIKAN PAKAI /generate
+                method: 'POST',
+                headers: { 
+                    'Authorization': `Bearer ${token}`, // Token login JWT kamu
+                    'Content-Type': 'application/json' 
+                },
+                body: JSON.stringify({ name: name }) // Kirim nama ke backend
+            });
+
+            if (res.ok) {
+                Swal.fire({ 
+                    icon: 'success', 
+                    title: 'KEY GENERATED', 
+                    text: 'Kunci API baru berhasil dibuat.',
+                    background: '#0D1117', 
+                    color: '#fff',
+                    timer: 1500, 
+                    showConfirmButton: false 
+                });
+                loadDashboard(); // Refresh daftar key di layar
+            } else {
+                Swal.fire({ icon: 'error', title: 'Gagal', text: 'Server menolak permintaan.', background: '#0D1117', color: '#fff' });
+            }
+        } catch (err) {
+            Swal.fire({ icon: 'error', title: 'Error', text: 'Koneksi ke server terputus.', background: '#0D1117', color: '#fff' });
+        }
+    }
+}
         function showExample(c) { document.querySelectorAll('.status-tab').forEach(t=>{t.classList.remove('active-tab-btn','bg-white/5','text-white'); t.classList.add('text-slate-500');}); const active = document.getElementById(`tab-${c}`); active.classList.add('active-tab-btn','bg-white/5','text-white'); active.classList.remove('text-slate-500'); document.getElementById('exampleCode').innerHTML = syntaxHighlight(examples[c]); }
 function logout() {
     Swal.fire({ 

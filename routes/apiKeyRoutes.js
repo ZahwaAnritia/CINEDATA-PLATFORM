@@ -9,6 +9,9 @@ router.use(auth); // Semua rute di bawah ini butuh login
 
 router.get('/', apiKeyController.getKeys);
 router.post('/generate', apiKeyController.generateKey);
+// routes/apiKeyRoutes.js
+router.post('/generate', auth, apiKeyController.generateKey); 
+// ^ Menggunakan router.post dan mengarah ke /generate
 router.get('/my-stats', apiKeyController.getStats);
 
 // --- TAMBAHKAN BARIS INI ---
