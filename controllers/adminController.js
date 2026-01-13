@@ -119,3 +119,29 @@ exports.getGlobalLogs = async (req, res) => {
         res.json(rows);
     } catch (err) { res.status(500).json({ error: err.message }); }
 };
+
+// controllers/adminController.js
+
+// Fungsi untuk menghapus Akun Developer (Banned)
+exports.deleteUser = async (req, res) => {
+    const { id } = req.params;
+    try {
+        // Kita hanya izinkan menghapus yang rolenya 'developer' 
+        // supaya admin tidak sengaja menghapus admin lain lewat sini
+        const [result] = await db.execute(
+            'DELETE FROM users WHERE id = ? AND role = "developer"',
+            [id]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ 
+                success: false, 
+                message: "User tidak ditemukan atau Anda tidak punya izin menghapus akun ini" 
+            });
+        }
+
+        res.json({ success: true, message: "Akun Developer berhasil dihapus dari sistem." });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+};

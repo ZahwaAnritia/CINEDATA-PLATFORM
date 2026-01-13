@@ -38,7 +38,7 @@ untuk aplikasi pihak ketiga, dengan sistem autentikasi berbasis JWT dan API Key.
 # ![Dev Console](./sscinedata/regisdev.png)
 # ![Dev Console](./sscinedata/logindev.png)
 
-# ![Dev Console](./sscinedata/dev1.png)
+# ![Dev Console](./sscinedata/dev2.png)
 # ![Dev Console](./sscinedata/laygrounddev2.png)
 # ![Dev Console](./sscinedata/schemadev3.png)
 # ![Dev Console](./sscinedata/livecatalogdev4.png)
@@ -49,3 +49,37 @@ untuk aplikasi pihak ketiga, dengan sistem autentikasi berbasis JWT dan API Key.
 
 ## Uji RateLimit
 # ![Dev Console](./sscinedata/ujiratelimit.png)
+
+## Uji Endpoint
+
+## Kelompok Authentication (Public)
+# ![Dev Console](./sscinedata/e1.png)
+# ![Dev Console](./sscinedata/e2.png)
+# ![Dev Console](./sscinedata/e8.png)
+# ![Dev Console](./sscinedata/e10.png)
+
+## Kelompok Dashboard & Profile (Auth: JWT Bearer Token)
+# ![Dev Console](./sscinedata/e3.png)
+# ![Dev Console](./sscinedata/e4.png)
+# ![Dev Console](./sscinedata/e5.png)
+# ![Dev Console](./sscinedata/e6.png)
+# ![Dev Console](./sscinedata/e7.png)
+# ![Dev Console](./sscinedata/e7.1.png)
+
+
+## Kelompok Admin Hub (Auth: JWT Bearer Token + Role Admin)
+# ![Dev Console](./sscinedata/e11.png)
+# ![Dev Console](./sscinedata/e12.png)
+# ![Dev Console](./sscinedata/e13.png)
+# ![Dev Console](./sscinedata/e13.1.png)
+# ![Dev Console](./sscinedata/e14.png)
+# ![Dev Console](./sscinedata/e15.png)
+# ![Dev Console](./sscinedata/e16.png)
+# ![Dev Console](./sscinedata/9.1.png)
+# ![Dev Console](./sscinedata/deluser.png)
+
+## Kelompok Core Metadata Services (Auth: x-api-key)
+# ![Dev Console](./sscinedata/1.png)
+# ![Dev Console](./sscinedata/2.png)
+# ![Dev Console](./sscinedata/3.png)
+# ![Dev Console](./sscinedata/4.png)

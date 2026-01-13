@@ -523,17 +523,22 @@
                 const stats = await rS.json();
                 
                 // Render Keys (LEBIH GEDER - Full Width)
+                // Render Keys (LEBIH GEDER - Full Width)
                 document.getElementById('keysContainer').innerHTML = Array.isArray(keys) ? keys.map(k => `
                     <div class="bg-[#050810] border border-white/5 p-4 rounded-xl relative group hover:border-red-500/30 transition-all w-full">
-                        <div class="flex justify-between items-center w-full">
-                            <div class="w-full mr-4">
-                                <p class="text-[8px] font-black text-slate-600 uppercase mb-1 tracking-widest">${k.key_name}</p>
-                                <code class="text-[10px] text-red-400 font-mono bg-red-900/10 px-3 py-2 rounded block break-all">${k.api_key}</code>
+                        <div class="flex flex-col w-full">
+                            <p class="text-[8px] font-black text-slate-600 uppercase mb-2 tracking-widest">${k.key_name}</p>
+                            <code class="text-[10px] text-red-400 font-mono bg-red-900/10 px-3 py-2 rounded block break-all mb-3">${k.api_key}</code>
+                            <div class="flex gap-2">
+                                <button onclick="copyToClipboard('${k.api_key}')" class="flex-1 h-9 bg-white/5 rounded-lg flex items-center justify-center gap-2 text-slate-400 hover:bg-white hover:text-black transition-all shadow-lg text-[10px] font-bold">
+                                    <i class="far fa-copy"></i> Copy
+                                </button>
+                                <button onclick="deleteApiKey(${k.id})" class="flex-1 h-9 bg-red-500/10 rounded-lg flex items-center justify-center gap-2 text-red-500 hover:bg-red-600 hover:text-white transition-all shadow-lg text-[10px] font-bold border border-red-500/20">
+                                    <i class="fas fa-trash-alt"></i> Delete
+                                </button>
                             </div>
-                            <button onclick="copyToClipboard('${k.api_key}')" class="h-10 w-10 bg-white/5 rounded-lg flex items-center justify-center text-slate-500 hover:bg-white hover:text-black transition-all shadow-lg"><i class="far fa-copy"></i></button>
                         </div>
                     </div>`).reverse().join('') : '<p class="text-slate-600 text-xs italic">No keys found.</p>';
-
                 // Render Stats
                 document.getElementById('totalCalls').innerText = stats.total_calls || 0;
                 document.getElementById('avgLatency').innerText = stats.recent_usage?.length ? Math.round(stats.recent_usage.reduce((a,b)=>a+(b.response_time_ms||0),0)/stats.recent_usage.length) : 0;
@@ -586,6 +591,30 @@
                 btn.innerHTML = 'Send Request <i class="fas fa-paper-plane ml-2"></i>'; 
             }
         }
+
+        async function deleteApiKey(id) {
+    const result = await Swal.fire({
+        title: 'Revoke API Key?',
+        text: "Kunci ini akan segera dinonaktifkan dan tidak bisa digunakan lagi.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        confirmButtonText: 'Ya, Hapus!',
+        background: '#0D1117',
+        color: '#fff'
+    });
+
+    if (result.isConfirmed) {
+        const res = await fetch(`/api/keys/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+            Swal.fire({ icon: 'success', title: 'Key Revoked', background: '#0D1117', color: '#fff', timer: 1500, showConfirmButton: false });
+            loadDashboard();
+        }
+    }
+}
 
         // --- SYNTAX HIGHLIGHTER FUNCTION ---
         function syntaxHighlight(json) {

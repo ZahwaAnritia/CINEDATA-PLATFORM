@@ -55,3 +55,24 @@ exports.getStats = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
+// Tambahkan ini di controllers/apiKeyController.js
+
+exports.deleteKey = async (req, res) => {
+    const { id } = req.params;
+    try {
+        // Pastikan hanya pemilik key (user_id) yang bisa menghapus key-nya sendiri
+        const [result] = await db.execute(
+            'DELETE FROM api_keys WHERE id = ? AND user_id = ?',
+            [id, req.user.id]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: "API Key tidak ditemukan atau bukan milik Anda" });
+        }
+
+        res.json({ success: true, message: "API Key berhasil dihapus/dicabut." });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};

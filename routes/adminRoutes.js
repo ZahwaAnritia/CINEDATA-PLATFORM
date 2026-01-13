@@ -20,5 +20,6 @@ router.get('/movies/:id', adminController.getMovieById);     // Detail (UNTUK ED
 router.post('/movies', adminController.addMovie);            // Tambah
 router.put('/movies/:id', adminController.updateMovie);      // Update/Simpan Edit
 router.delete('/movies/:id', adminController.deleteMovie);   // Hapus
+router.delete('/users/:id', adminController.deleteUser); 
 
 module.exports = router;
